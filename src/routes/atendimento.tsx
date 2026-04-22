@@ -22,6 +22,20 @@ export const Route = createFileRoute("/atendimento")({
 });
 
 function Atendimento() {
+  return (
+    <ClientOnly
+      fallback={
+        <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+          Carregando painel de atendimento...
+        </div>
+      }
+    >
+      <AtendimentoView />
+    </ClientOnly>
+  );
+}
+
+function AtendimentoView() {
   const [selectedLead, setSelectedLead] = useState<string>("l3");
 
   return (
