@@ -11,7 +11,7 @@ import {
   useSalvarConfiguracaoClinica,
 } from "@/hooks/useConfiguracaoClinica";
 
-export const Route = createFileRoute("/configuracoes/dados-clinica")({
+export const Route = createFileRoute("/configuracoes-dados-clinica")({
   component: DadosClinicaPage,
   head: () => ({
     meta: [

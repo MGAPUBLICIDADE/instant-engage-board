@@ -10,17 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedesSociaisRouteImport } from './routes/redes-sociais'
+import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes-dados-clinica'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes.dados-clinica'
 
 const RedesSociaisRoute = RedesSociaisRouteImport.update({
   id: '/redes-sociais',
   path: '/redes-sociais',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfiguracoesDadosClinicaRoute =
+  ConfiguracoesDadosClinicaRouteImport.update({
+    id: '/configuracoes-dados-clinica',
+    path: '/configuracoes-dados-clinica',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
@@ -41,37 +47,31 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ConfiguracoesDadosClinicaRoute =
-  ConfiguracoesDadosClinicaRouteImport.update({
-    id: '/dados-clinica',
-    path: '/dados-clinica',
-    getParentRoute: () => ConfiguracoesRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
-  '/configuracoes': typeof ConfiguracoesRouteWithChildren
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/redes-sociais': typeof RedesSociaisRoute
-  '/configuracoes/dados-clinica': typeof ConfiguracoesDadosClinicaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
-  '/configuracoes': typeof ConfiguracoesRouteWithChildren
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/redes-sociais': typeof RedesSociaisRoute
-  '/configuracoes/dados-clinica': typeof ConfiguracoesDadosClinicaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
-  '/configuracoes': typeof ConfiguracoesRouteWithChildren
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/redes-sociais': typeof RedesSociaisRoute
-  '/configuracoes/dados-clinica': typeof ConfiguracoesDadosClinicaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,31 +80,32 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/configuracoes'
+    | '/configuracoes-dados-clinica'
     | '/redes-sociais'
-    | '/configuracoes/dados-clinica'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/agenda'
     | '/atendimento'
     | '/configuracoes'
+    | '/configuracoes-dados-clinica'
     | '/redes-sociais'
-    | '/configuracoes/dados-clinica'
   id:
     | '__root__'
     | '/'
     | '/agenda'
     | '/atendimento'
     | '/configuracoes'
+    | '/configuracoes-dados-clinica'
     | '/redes-sociais'
-    | '/configuracoes/dados-clinica'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendaRoute: typeof AgendaRoute
   AtendimentoRoute: typeof AtendimentoRoute
-  ConfiguracoesRoute: typeof ConfiguracoesRouteWithChildren
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
   RedesSociaisRoute: typeof RedesSociaisRoute
 }
 
@@ -115,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/redes-sociais'
       fullPath: '/redes-sociais'
       preLoaderRoute: typeof RedesSociaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes-dados-clinica': {
+      id: '/configuracoes-dados-clinica'
+      path: '/configuracoes-dados-clinica'
+      fullPath: '/configuracoes-dados-clinica'
+      preLoaderRoute: typeof ConfiguracoesDadosClinicaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/configuracoes': {
@@ -145,35 +153,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/configuracoes/dados-clinica': {
-      id: '/configuracoes/dados-clinica'
-      path: '/dados-clinica'
-      fullPath: '/configuracoes/dados-clinica'
-      preLoaderRoute: typeof ConfiguracoesDadosClinicaRouteImport
-      parentRoute: typeof ConfiguracoesRoute
-    }
   }
 }
-
-interface ConfiguracoesRouteChildren {
-  ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
-}
-
-const ConfiguracoesRouteChildren: ConfiguracoesRouteChildren = {
-  ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
-}
-
-const ConfiguracoesRouteWithChildren = ConfiguracoesRoute._addFileChildren(
-  ConfiguracoesRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendaRoute: AgendaRoute,
   AtendimentoRoute: AtendimentoRoute,
-  ConfiguracoesRoute: ConfiguracoesRouteWithChildren,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
   RedesSociaisRoute: RedesSociaisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
