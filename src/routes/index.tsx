@@ -29,7 +29,7 @@ function Dashboard() {
         <Header />
 
         <KpiCards />
-        <AlertsBar />
+        <AlertsBar onSelect={setSelectedLead} />
 
         <main className="grid grid-cols-1 gap-3 lg:grid-cols-12 lg:gap-4">
           <section className="lg:col-span-7 xl:col-span-8 h-[calc(100vh-360px)] min-h-[560px]">
