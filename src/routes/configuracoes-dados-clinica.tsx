@@ -137,6 +137,17 @@ function DadosClinicaPage() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="cnpj">CNPJ</Label>
+            <Input
+              id="cnpj"
+              value={form.cnpj}
+              onChange={handleChange("cnpj")}
+              placeholder="00.000.000/0001-00"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="endereco">Endereço</Label>
             <Input
               id="endereco"

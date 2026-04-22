@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   Home,
   Calendar,
@@ -9,7 +9,10 @@ import {
   Sparkles,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useConfiguracaoClinica } from "@/hooks/useConfiguracaoClinica";
 
 const nav = [
   { to: "/", label: "Home", Icon: Home },
