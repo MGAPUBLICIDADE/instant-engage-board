@@ -1,6 +1,7 @@
 export type Channel = "whatsapp" | "instagram";
 export type Priority = "low" | "medium" | "high";
 export type LeadStatus = "novo" | "atendimento" | "aguardando" | "finalizado";
+export type LeadTag = "Urgente" | "Hot Lead" | "Fechando" | "Convertido" | "Novo";
 
 export interface Lead {
   id: string;
@@ -12,7 +13,7 @@ export interface Lead {
   status: LeadStatus;
   priority: Priority;
   unread: number;
-  tag?: string;
+  tag?: LeadTag;
 }
 
 export interface Message {
@@ -24,8 +25,10 @@ export interface Message {
   channel: Channel;
 }
 
-const now = Date.now();
-const m = (min: number) => new Date(now - min * 60_000).toISOString();
+// Use a deterministic base so SSR and client agree on initial timestamps.
+// We pick a fixed reference; UI components compute "minutes ago" only on the client.
+const BASE = new Date("2025-01-15T13:00:00.000Z").getTime();
+const m = (min: number) => new Date(BASE - min * 60_000).toISOString();
 
 export const leads: Lead[] = [
   {
@@ -50,6 +53,7 @@ export const leads: Lead[] = [
     status: "novo",
     priority: "medium",
     unread: 1,
+    tag: "Novo",
   },
   {
     id: "l3",
@@ -84,6 +88,7 @@ export const leads: Lead[] = [
     status: "atendimento",
     priority: "high",
     unread: 1,
+    tag: "Hot Lead",
   },
   {
     id: "l6",
@@ -95,6 +100,7 @@ export const leads: Lead[] = [
     status: "aguardando",
     priority: "high",
     unread: 0,
+    tag: "Urgente",
   },
   {
     id: "l7",
@@ -155,6 +161,17 @@ export function getMessages(leadId: string): Message[] {
       { id: "x2", leadId, from: "agent", channel: "whatsapp", text: "Olá! Como posso te ajudar hoje?", at: m(28) },
     ]
   );
+}
+
+/**
+ * Auto-priority based on minutes without response from agent.
+ * <10min: low, 10-30min: medium (warning), >30min: high (urgent)
+ */
+export function autoPriority(iso: string): Priority {
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000);
+  if (diff > 30) return "high";
+  if (diff > 10) return "medium";
+  return "low";
 }
 
 export function timeAgo(iso: string): string {
