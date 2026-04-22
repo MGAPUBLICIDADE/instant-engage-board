@@ -27,6 +27,8 @@ export const Route = createFileRoute("/configuracoes-dados-clinica")({
 interface FormState {
   nome_clinica: string;
   endereco: string;
+  cidade: string;
+  estado: string;
   telefone: string;
   whatsapp: string;
   email: string;
@@ -35,6 +37,8 @@ interface FormState {
 const EMPTY: FormState = {
   nome_clinica: "",
   endereco: "",
+  cidade: "",
+  estado: "",
   telefone: "",
   whatsapp: "",
   email: "",
@@ -50,6 +54,8 @@ function DadosClinicaPage() {
       setForm({
         nome_clinica: data.nome_clinica ?? "",
         endereco: data.endereco ?? "",
+        cidade: data.cidade ?? "",
+        estado: data.estado ?? "",
         telefone: data.telefone ?? "",
         whatsapp: data.whatsapp ?? "",
         email: data.email ?? "",
@@ -67,6 +73,8 @@ function DadosClinicaPage() {
       await salvar.mutateAsync({
         nome_clinica: form.nome_clinica.trim() || null,
         endereco: form.endereco.trim() || null,
+        cidade: form.cidade.trim() || null,
+        estado: form.estado.trim().toUpperCase() || null,
         telefone: form.telefone.trim() || null,
         whatsapp: form.whatsapp.trim() || null,
         email: form.email.trim() || null,
@@ -130,9 +138,33 @@ function DadosClinicaPage() {
               id="endereco"
               value={form.endereco}
               onChange={handleChange("endereco")}
-              placeholder="Rua, número, bairro, cidade — UF"
+              placeholder="Rua, número, bairro"
               disabled={isLoading}
             />
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-[1fr_120px]">
+            <div className="space-y-2">
+              <Label htmlFor="cidade">Cidade</Label>
+              <Input
+                id="cidade"
+                value={form.cidade}
+                onChange={handleChange("cidade")}
+                placeholder="São Paulo"
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="estado">Estado (UF)</Label>
+              <Input
+                id="estado"
+                value={form.estado}
+                onChange={handleChange("estado")}
+                placeholder="SP"
+                maxLength={2}
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
