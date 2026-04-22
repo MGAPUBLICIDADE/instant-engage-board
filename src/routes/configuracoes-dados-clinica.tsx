@@ -26,6 +26,7 @@ export const Route = createFileRoute("/configuracoes-dados-clinica")({
 
 interface FormState {
   nome_clinica: string;
+  cnpj: string;
   endereco: string;
   cidade: string;
   estado: string;
@@ -36,6 +37,7 @@ interface FormState {
 
 const EMPTY: FormState = {
   nome_clinica: "",
+  cnpj: "",
   endereco: "",
   cidade: "",
   estado: "",
@@ -53,6 +55,7 @@ function DadosClinicaPage() {
     if (data) {
       setForm({
         nome_clinica: data.nome_clinica ?? "",
+        cnpj: data.cnpj ?? "",
         endereco: data.endereco ?? "",
         cidade: data.cidade ?? "",
         estado: data.estado ?? "",
@@ -72,6 +75,7 @@ function DadosClinicaPage() {
     try {
       await salvar.mutateAsync({
         nome_clinica: form.nome_clinica.trim() || null,
+        cnpj: form.cnpj.trim() || null,
         endereco: form.endereco.trim() || null,
         cidade: form.cidade.trim() || null,
         estado: form.estado.trim().toUpperCase() || null,
