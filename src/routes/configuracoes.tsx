@@ -18,11 +18,11 @@ type SectionItem = {
   Icon: typeof Building2;
   title: string;
   desc: string;
-  to?: "/configuracoes/dados-clinica";
+  to?: "/configuracoes-dados-clinica";
 };
 
 const sections: SectionItem[] = [
-  { Icon: Building2, title: "Dados da clínica", desc: "Nome, endereço e contatos", to: "/configuracoes/dados-clinica" },
+  { Icon: Building2, title: "Dados da clínica", desc: "Nome, endereço e contatos", to: "/configuracoes-dados-clinica" },
   { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões" },
   { Icon: Bell, title: "Notificações", desc: "Configure alertas e lembretes automáticos" },
   { Icon: Palette, title: "Aparência", desc: "Tema, cores e personalização visual" },
