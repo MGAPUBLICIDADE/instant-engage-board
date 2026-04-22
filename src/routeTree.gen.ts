@@ -14,6 +14,7 @@ import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes.dados-clinica'
 
 const RedesSociaisRoute = RedesSociaisRouteImport.update({
   id: '/redes-sociais',
@@ -40,28 +41,37 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfiguracoesDadosClinicaRoute =
+  ConfiguracoesDadosClinicaRouteImport.update({
+    id: '/dados-clinica',
+    path: '/dados-clinica',
+    getParentRoute: () => ConfiguracoesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
-  '/configuracoes': typeof ConfiguracoesRoute
+  '/configuracoes': typeof ConfiguracoesRouteWithChildren
   '/redes-sociais': typeof RedesSociaisRoute
+  '/configuracoes/dados-clinica': typeof ConfiguracoesDadosClinicaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
-  '/configuracoes': typeof ConfiguracoesRoute
+  '/configuracoes': typeof ConfiguracoesRouteWithChildren
   '/redes-sociais': typeof RedesSociaisRoute
+  '/configuracoes/dados-clinica': typeof ConfiguracoesDadosClinicaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
-  '/configuracoes': typeof ConfiguracoesRoute
+  '/configuracoes': typeof ConfiguracoesRouteWithChildren
   '/redes-sociais': typeof RedesSociaisRoute
+  '/configuracoes/dados-clinica': typeof ConfiguracoesDadosClinicaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,8 +81,15 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/redes-sociais'
+    | '/configuracoes/dados-clinica'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agenda' | '/atendimento' | '/configuracoes' | '/redes-sociais'
+  to:
+    | '/'
+    | '/agenda'
+    | '/atendimento'
+    | '/configuracoes'
+    | '/redes-sociais'
+    | '/configuracoes/dados-clinica'
   id:
     | '__root__'
     | '/'
@@ -80,13 +97,14 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/redes-sociais'
+    | '/configuracoes/dados-clinica'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendaRoute: typeof AgendaRoute
   AtendimentoRoute: typeof AtendimentoRoute
-  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRouteWithChildren
   RedesSociaisRoute: typeof RedesSociaisRoute
 }
 
@@ -127,14 +145,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/configuracoes/dados-clinica': {
+      id: '/configuracoes/dados-clinica'
+      path: '/dados-clinica'
+      fullPath: '/configuracoes/dados-clinica'
+      preLoaderRoute: typeof ConfiguracoesDadosClinicaRouteImport
+      parentRoute: typeof ConfiguracoesRoute
+    }
   }
 }
+
+interface ConfiguracoesRouteChildren {
+  ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
+}
+
+const ConfiguracoesRouteChildren: ConfiguracoesRouteChildren = {
+  ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
+}
+
+const ConfiguracoesRouteWithChildren = ConfiguracoesRoute._addFileChildren(
+  ConfiguracoesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendaRoute: AgendaRoute,
   AtendimentoRoute: AtendimentoRoute,
-  ConfiguracoesRoute: ConfiguracoesRoute,
+  ConfiguracoesRoute: ConfiguracoesRouteWithChildren,
   RedesSociaisRoute: RedesSociaisRoute,
 }
 export const routeTree = rootRouteImport
