@@ -5,6 +5,7 @@ import { KpiCards } from "@/components/dashboard/KpiCards";
 import { Kanban } from "@/components/dashboard/Kanban";
 import { ChatPanel } from "@/components/dashboard/ChatPanel";
 import { AlertsBar } from "@/components/dashboard/AlertsBar";
+import { ClientOnly } from "@/components/ClientOnly";
 
 export const Route = createFileRoute("/atendimento")({
   component: Atendimento,
