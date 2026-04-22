@@ -14,10 +14,10 @@ import { Instagram, MessageCircle, Flame, AlertCircle, GripVertical, Sparkles, C
 import { type Lead, type LeadStatus, type LeadTag, leads as initialLeads, timeAgo, autoPriority } from "@/lib/mock-data";
 
 const COLUMNS: { id: LeadStatus; title: string; tone: string; dot: string }[] = [
-  { id: "novo", title: "Novo Lead", tone: "border-info/40", dot: "bg-info" },
+  { id: "novo", title: "Novo Paciente", tone: "border-info/40", dot: "bg-info" },
   { id: "atendimento", title: "Em Atendimento", tone: "border-primary/40", dot: "bg-primary" },
-  { id: "aguardando", title: "Aguardando Cliente", tone: "border-warning/40", dot: "bg-warning" },
-  { id: "finalizado", title: "Finalizado", tone: "border-success/40", dot: "bg-success" },
+  { id: "aguardando", title: "Agendado", tone: "border-warning/40", dot: "bg-warning" },
+  { id: "finalizado", title: "Atendimento Concluído", tone: "border-success/40", dot: "bg-success" },
 ];
 
 interface TagStyle {
@@ -68,11 +68,11 @@ export function Kanban({ selectedId, onSelect }: Props) {
     <div className="glass-panel flex h-full flex-col overflow-hidden rounded-2xl">
       <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
         <div>
-          <h2 className="font-display text-sm font-bold tracking-tight">Fila de Atendimento</h2>
+          <h2 className="font-display text-sm font-bold tracking-tight">Fila de Pacientes</h2>
           <p className="text-[11px] text-muted-foreground">Arraste os cards entre colunas</p>
         </div>
         <span className="rounded-full border border-border bg-surface px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-          {items.length} contatos
+          {items.length} pacientes
         </span>
       </div>
 
