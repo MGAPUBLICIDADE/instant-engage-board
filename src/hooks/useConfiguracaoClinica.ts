@@ -6,6 +6,8 @@ export interface ConfiguracaoClinica {
   empresa_id: string;
   nome_clinica: string | null;
   endereco: string | null;
+  cidade: string | null;
+  estado: string | null;
   telefone: string | null;
   whatsapp: string | null;
   email: string | null;
