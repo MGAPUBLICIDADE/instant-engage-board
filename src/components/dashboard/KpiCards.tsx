@@ -19,12 +19,12 @@ const toneMap: Record<Kpi["tone"], { bg: string; text: string; bar: string }> = 
 };
 
 const data: Kpi[] = [
-  { label: "Leads Hoje", value: "24", delta: "vs ontem", trend: "up", trendValue: "+18%", Icon: TrendingUp, tone: "primary" },
-  { label: "Conversas Ativas", value: "9", delta: "5 não lidas", trend: "up", trendValue: "+12%", Icon: MessageCircle, tone: "info" },
-  { label: "Aguardando", value: "4", delta: "2 urgentes", trend: "down", trendValue: "-8%", Icon: Clock, tone: "warning" },
-  { label: "Convertidos", value: "7", delta: "Meta: 10", trend: "up", trendValue: "+25%", Icon: CheckCircle2, tone: "success" },
-  { label: "Tempo Médio", value: "3m 42s", delta: "Resposta inicial", trend: "down", trendValue: "-22%", Icon: Timer, tone: "info" },
-  { label: "Taxa Conversão", value: "29,1%", delta: "vs semana ant.", trend: "up", trendValue: "+4,3%", Icon: Target, tone: "success" },
+  { label: "Pacientes Hoje", value: "24", delta: "vs ontem", trend: "up", trendValue: "+18%", Icon: TrendingUp, tone: "primary" },
+  { label: "Atendimentos em andamento", value: "9", delta: "5 não lidos", trend: "up", trendValue: "+12%", Icon: MessageCircle, tone: "info" },
+  { label: "Aguardando retorno", value: "4", delta: "2 urgentes", trend: "down", trendValue: "-8%", Icon: Clock, tone: "warning" },
+  { label: "Agendamentos confirmados", value: "7", delta: "Meta: 10", trend: "up", trendValue: "+25%", Icon: CheckCircle2, tone: "success" },
+  { label: "Tempo Médio Resposta", value: "3m 42s", delta: "Primeiro contato", trend: "down", trendValue: "-22%", Icon: Timer, tone: "info" },
+  { label: "Taxa de Agendamento", value: "29,1%", delta: "vs semana ant.", trend: "up", trendValue: "+4,3%", Icon: Target, tone: "success" },
 ];
 
 export function KpiCards() {
