@@ -5,6 +5,7 @@ import { KpiCards } from "@/components/dashboard/KpiCards";
 import { Kanban } from "@/components/dashboard/Kanban";
 import { ChatPanel } from "@/components/dashboard/ChatPanel";
 import { AlertsBar } from "@/components/dashboard/AlertsBar";
+import { ClientOnly } from "@/components/ClientOnly";
 
 export const Route = createFileRoute("/atendimento")({
   component: Atendimento,
@@ -21,6 +22,20 @@ export const Route = createFileRoute("/atendimento")({
 });
 
 function Atendimento() {
+  return (
+    <ClientOnly
+      fallback={
+        <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+          Carregando painel de atendimento...
+        </div>
+      }
+    >
+      <AtendimentoView />
+    </ClientOnly>
+  );
+}
+
+function AtendimentoView() {
   const [selectedLead, setSelectedLead] = useState<string>("l3");
 
   return (
