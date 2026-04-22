@@ -89,9 +89,9 @@ function AgendaDialog({ onClose }: { onClose: () => void }) {
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const events = [
-    { day: today.getDate(), title: "Reunião Mariana A.", time: "14:30", tone: "bg-primary/20 text-primary" },
-    { day: today.getDate(), title: "Demo Juliana C.", time: "16:00", tone: "bg-success/20 text-success" },
-    { day: today.getDate() + 1, title: "Follow-up Diego F.", time: "10:00", tone: "bg-warning/20 text-warning" },
+    { day: today.getDate(), title: "Consulta Mariana A. — Harmonização", time: "14:30", tone: "bg-primary/20 text-primary" },
+    { day: today.getDate(), title: "Retorno Juliana C. — Dermato", time: "16:00", tone: "bg-success/20 text-success" },
+    { day: today.getDate() + 1, title: "Avaliação Diego F. — Ortopedia", time: "10:00", tone: "bg-warning/20 text-warning" },
   ];
 
   return (
@@ -155,7 +155,7 @@ function AgendaDialog({ onClose }: { onClose: () => void }) {
 
         <div className="mt-6">
           <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-            Próximos compromissos
+            Próximos atendimentos
           </p>
           <div className="space-y-2">
             {events.map((e, i) => (

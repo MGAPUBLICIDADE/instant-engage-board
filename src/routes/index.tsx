@@ -10,11 +10,11 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
   head: () => ({
     meta: [
-      { title: "Conecta MGA · Painel de Atendimento" },
+      { title: "Conecta MGA · Secretária Inteligente para Clínicas" },
       {
         name: "description",
         content:
-          "Conecta MGA — painel inteligente para atendimento em tempo real, com Kanban de leads e chat unificado WhatsApp e Instagram.",
+          "Conecta MGA — secretária inteligente para clínicas: organize pacientes, agendamentos e atendimentos via WhatsApp e Instagram em tempo real.",
       },
     ],
   }),

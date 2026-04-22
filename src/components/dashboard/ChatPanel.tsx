@@ -9,7 +9,9 @@ import {
   MoreVertical,
   CheckCheck,
   CalendarPlus,
+  CalendarClock,
   CheckCircle2,
+  Stethoscope,
 } from "lucide-react";
 import {
   formatTime,
@@ -23,10 +25,17 @@ interface Props {
 }
 
 const QUICK_REPLIES = [
-  "Olá! Posso te ajudar agora? 😊",
-  "Vou te enviar os valores em instantes.",
-  "Posso te ligar em 5 minutos?",
+  "Olá! Posso te ajudar com seu agendamento? 😊",
+  "Vou confirmar os horários disponíveis e já te retorno.",
+  "Posso te ligar em 5 minutos para confirmar?",
 ];
+
+const STATUS_LABEL: Record<string, { label: string; tone: string }> = {
+  novo: { label: "Novo paciente", tone: "bg-info/15 text-info border-info/40" },
+  atendimento: { label: "Em atendimento", tone: "bg-primary/15 text-primary border-primary/40" },
+  aguardando: { label: "Agendado", tone: "bg-warning/15 text-warning border-warning/40" },
+  finalizado: { label: "Atendimento concluído", tone: "bg-success/15 text-success border-success/40" },
+};
 
 export function ChatPanel({ leadId }: Props) {
   const lead = leads.find((l) => l.id === leadId) ?? leads[0];
@@ -84,15 +93,27 @@ export function ChatPanel({ leadId }: Props) {
           </div>
           <div className="min-w-0 leading-tight">
             <p className="truncate text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Atendendo
+              Atendendo paciente
             </p>
             <p className="truncate text-sm font-semibold">{lead.name}</p>
             <p className={`flex items-center gap-1 text-[11px] ${channelTone}`}>
               <ChannelIcon className="h-3 w-3" />
               <span>{channelLabel}</span>
-              <span className="mx-1 h-1 w-1 rounded-full bg-muted-foreground/60" />
-              <span className="text-muted-foreground">online</span>
+              {lead.procedure && (
+                <>
+                  <span className="mx-1 h-1 w-1 rounded-full bg-muted-foreground/60" />
+                  <span className="inline-flex items-center gap-1 text-muted-foreground">
+                    <Stethoscope className="h-3 w-3" />
+                    {lead.procedure}
+                  </span>
+                </>
+              )}
             </p>
+            <span
+              className={`mt-1 inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider ${STATUS_LABEL[lead.status].tone}`}
+            >
+              {STATUS_LABEL[lead.status].label}
+            </span>
           </div>
         </div>
 
@@ -103,24 +124,31 @@ export function ChatPanel({ leadId }: Props) {
       </div>
 
       {/* Quick actions */}
-      <div className="flex items-center gap-2 border-b border-border/40 bg-surface/40 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border/40 bg-surface/40 px-3 py-2">
         <button
-          onClick={() => setToast("Agendamento criado para amanhã às 10h")}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[11px] font-semibold transition-all hover:border-info/50 hover:bg-info/10 hover:text-info"
+          onClick={() => setToast("Consulta agendada para amanhã às 10h ✓")}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[11px] font-semibold transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
         >
           <CalendarPlus className="h-3.5 w-3.5" />
-          Agendar
+          Agendar consulta
+        </button>
+        <button
+          onClick={() => setToast("Solicitação de remarcação enviada")}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[11px] font-semibold transition-all hover:border-warning/50 hover:bg-warning/10 hover:text-warning"
+        >
+          <CalendarClock className="h-3.5 w-3.5" />
+          Remarcar
         </button>
         <button
           onClick={() => {
             setClosed(true);
-            setToast("Atendimento marcado como fechado ✓");
+            setToast("Presença confirmada ✓");
           }}
           disabled={closed}
           className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[11px] font-semibold transition-all hover:border-success/50 hover:bg-success/10 hover:text-success disabled:opacity-50"
         >
           <CheckCircle2 className="h-3.5 w-3.5" />
-          {closed ? "Fechado" : "Marcar como fechado"}
+          {closed ? "Confirmado" : "Confirmar presença"}
         </button>
         <div className="ml-auto flex items-center gap-1 text-[10px] text-muted-foreground">
           <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-success" />
@@ -133,7 +161,7 @@ export function ChatPanel({ leadId }: Props) {
         <div className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive animate-fade-up">
           <span className="flex h-2 w-2 rounded-full bg-destructive animate-pulse-soft" />
           <span className="font-semibold">Responder agora —</span>
-          <span className="text-destructive/80">cliente em alta prioridade</span>
+          <span className="text-destructive/80">paciente em alta prioridade</span>
         </div>
       )}
 
