@@ -10,8 +10,8 @@ import {
   useDroppable,
   DragOverlay,
 } from "@dnd-kit/core";
-import { Instagram, MessageCircle, Flame, AlertCircle, GripVertical } from "lucide-react";
-import { type Lead, type LeadStatus, leads as initialLeads, timeAgo } from "@/lib/mock-data";
+import { Instagram, MessageCircle, Flame, AlertCircle, GripVertical, Sparkles, CheckCircle2 } from "lucide-react";
+import { type Lead, type LeadStatus, type LeadTag, leads as initialLeads, timeAgo, autoPriority } from "@/lib/mock-data";
 
 const COLUMNS: { id: LeadStatus; title: string; tone: string; dot: string }[] = [
   { id: "novo", title: "Novo Lead", tone: "border-info/40", dot: "bg-info" },
@@ -19,6 +19,19 @@ const COLUMNS: { id: LeadStatus; title: string; tone: string; dot: string }[] = 
   { id: "aguardando", title: "Aguardando Cliente", tone: "border-warning/40", dot: "bg-warning" },
   { id: "finalizado", title: "Finalizado", tone: "border-success/40", dot: "bg-success" },
 ];
+
+interface TagStyle {
+  classes: string;
+  Icon?: typeof Flame;
+}
+
+const TAG_STYLES: Record<LeadTag, TagStyle> = {
+  Urgente: { classes: "bg-destructive/20 text-destructive border-destructive/40", Icon: Flame },
+  "Hot Lead": { classes: "bg-warning/20 text-warning border-warning/40", Icon: Flame },
+  Fechando: { classes: "bg-success/20 text-success border-success/40", Icon: CheckCircle2 },
+  Convertido: { classes: "bg-success/15 text-success border-success/30", Icon: CheckCircle2 },
+  Novo: { classes: "bg-info/20 text-info border-info/40", Icon: Sparkles },
+};
 
 interface Props {
   selectedId: string;
@@ -93,8 +106,8 @@ function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col rounded-xl border bg-surface/40 transition-colors ${
-        isOver ? `${col.tone} bg-surface-elevated` : "border-border/50"
+      className={`flex flex-col rounded-xl border bg-surface/40 transition-all duration-200 ${
+        isOver ? `${col.tone} bg-surface-elevated scale-[1.01]` : "border-border/50"
       }`}
     >
       <div className="flex items-center justify-between border-b border-border/40 px-3 py-2.5">
@@ -135,7 +148,7 @@ function DraggableCard({
       ref={setNodeRef}
       onClick={onClick}
       style={{ opacity: isDragging ? 0.4 : 1 }}
-      className={`group cursor-pointer ${selected ? "" : ""}`}
+      className="group cursor-pointer"
     >
       <LeadCard lead={lead} selected={selected} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
@@ -153,20 +166,42 @@ function LeadCard({
   dragging?: boolean;
   dragHandleProps?: Record<string, unknown>;
 }) {
-  const priorityRing =
-    lead.priority === "high"
-      ? "border-destructive/50"
-      : lead.priority === "medium"
-        ? "border-warning/40"
-        : "border-border/60";
+  // Auto-priority: combine lead.priority with time-based escalation
+  const computed = autoPriority(lead.lastMessageAt);
+  const effectivePriority =
+    lead.status === "finalizado"
+      ? "low"
+      : computed === "high" || lead.priority === "high"
+        ? "high"
+        : computed === "medium" || lead.priority === "medium"
+          ? "medium"
+          : "low";
+
+  const isHot = lead.tag === "Hot Lead" || lead.tag === "Fechando";
+  const isNew = lead.status === "novo" && effectivePriority !== "high";
+
+  let glowClass = "";
+  if (selected) {
+    glowClass = "glow-selected border-primary/60";
+  } else if (effectivePriority === "high" && lead.status !== "finalizado") {
+    glowClass = "glow-urgent border-destructive/40";
+  } else if (isHot) {
+    glowClass = "glow-hot border-warning/40";
+  } else if (isNew) {
+    glowClass = "glow-new border-success/30";
+  } else {
+    glowClass = "border-border/60 hover:border-border";
+  }
+
+  const ChannelIcon = lead.channel === "whatsapp" ? MessageCircle : Instagram;
 
   return (
     <div
-      className={`relative rounded-xl border bg-card p-3 transition-all ${priorityRing} ${
-        selected ? "ring-2 ring-primary/60 border-primary/40" : "hover:border-border"
-      } ${dragging ? "shadow-[var(--shadow-elevated)] rotate-1" : ""}`}
+      className={`relative rounded-xl border bg-card p-3 card-lift ${glowClass} ${
+        dragging ? "shadow-[var(--shadow-elevated)] rotate-1 scale-105" : ""
+      }`}
     >
-      {lead.priority === "high" && (
+      {effectivePriority === "high" && lead.status !== "finalizado" && (
         <div className="absolute -left-1 top-3 bottom-3 w-1 rounded-full bg-destructive" />
       )}
 
@@ -178,11 +213,7 @@ function LeadCard({
               lead.channel === "whatsapp" ? "bg-whatsapp text-background" : "bg-instagram text-background"
             }`}
           >
-            {lead.channel === "whatsapp" ? (
-              <MessageCircle className="h-2.5 w-2.5" strokeWidth={3} />
-            ) : (
-              <Instagram className="h-2.5 w-2.5" strokeWidth={3} />
-            )}
+            <ChannelIcon className="h-2.5 w-2.5" strokeWidth={3} />
           </span>
         </div>
 
@@ -203,24 +234,21 @@ function LeadCard({
           </p>
 
           <div className="mt-2 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5">
-              {lead.priority === "high" && (
-                <span className="inline-flex items-center gap-1 rounded-md bg-destructive/15 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-destructive">
-                  <Flame className="h-2.5 w-2.5" /> Urgente
-                </span>
-              )}
-              {lead.tag && (
-                <span className="rounded-md bg-primary/15 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-primary">
-                  {lead.tag}
-                </span>
-              )}
+            <div className="flex flex-wrap items-center gap-1">
+              {lead.tag && <TagPill tag={lead.tag} />}
             </div>
             <span
-              className={`flex items-center gap-1 text-[10px] font-medium ${
-                lead.priority === "high" ? "text-destructive" : "text-muted-foreground"
+              className={`flex shrink-0 items-center gap-1 text-[10px] font-medium ${
+                effectivePriority === "high" && lead.status !== "finalizado"
+                  ? "text-destructive"
+                  : effectivePriority === "medium"
+                    ? "text-warning"
+                    : "text-muted-foreground"
               }`}
             >
-              {lead.priority === "high" && <AlertCircle className="h-3 w-3" />}
+              {effectivePriority === "high" && lead.status !== "finalizado" && (
+                <AlertCircle className="h-3 w-3" />
+              )}
               {timeAgo(lead.lastMessageAt)}
             </span>
           </div>
@@ -233,5 +261,18 @@ function LeadCard({
         </span>
       )}
     </div>
+  );
+}
+
+function TagPill({ tag }: { tag: LeadTag }) {
+  const style = TAG_STYLES[tag];
+  const Icon = style.Icon;
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider ${style.classes}`}
+    >
+      {Icon && <Icon className="h-2.5 w-2.5" strokeWidth={2.5} />}
+      {tag}
+    </span>
   );
 }
