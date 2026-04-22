@@ -1,0 +1,58 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Bell, User, Lock, Palette, Building2 } from "lucide-react";
+
+export const Route = createFileRoute("/configuracoes")({
+  component: ConfiguracoesPage,
+  head: () => ({
+    meta: [
+      { title: "Configurações · Conecta MGA" },
+      {
+        name: "description",
+        content: "Personalize sua experiência e ajuste preferências do Conecta MGA.",
+      },
+    ],
+  }),
+});
+
+const sections = [
+  { Icon: Building2, title: "Dados da clínica", desc: "Nome, endereço e horário de atendimento" },
+  { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões" },
+  { Icon: Bell, title: "Notificações", desc: "Configure alertas e lembretes automáticos" },
+  { Icon: Palette, title: "Aparência", desc: "Tema, cores e personalização visual" },
+  { Icon: Lock, title: "Segurança", desc: "Senha, autenticação e privacidade" },
+];
+
+function ConfiguracoesPage() {
+  return (
+    <div className="min-h-screen p-4 lg:p-6">
+      <div className="mx-auto max-w-[900px]">
+        <header className="mb-6">
+          <h1 className="font-display text-2xl font-bold tracking-tight">Configurações</h1>
+          <p className="text-sm text-muted-foreground">
+            Personalize o Conecta MGA para a rotina da sua clínica.
+          </p>
+        </header>
+
+        <div className="space-y-2">
+          {sections.map(({ Icon, title, desc }) => (
+            <button
+              key={title}
+              className="group flex w-full items-center gap-4 rounded-2xl border border-border bg-surface px-4 py-4 text-left transition-all hover:border-primary/40 hover:bg-surface-elevated card-lift"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Icon className="h-5 w-5" strokeWidth={2.2} />
+              </div>
+              <div className="flex-1 leading-tight">
+                <p className="text-sm font-bold">{title}</p>
+                <p className="text-xs text-muted-foreground">{desc}</p>
+              </div>
+              <span className="text-xs font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                Abrir →
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

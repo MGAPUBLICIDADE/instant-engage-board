@@ -9,8 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RedesSociaisRouteImport } from './routes/redes-sociais'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as AtendimentoRouteImport } from './routes/atendimento'
+import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RedesSociaisRoute = RedesSociaisRouteImport.update({
+  id: '/redes-sociais',
+  path: '/redes-sociais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtendimentoRoute = AtendimentoRouteImport.update({
+  id: '/atendimento',
+  path: '/atendimento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendaRoute = AgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +43,83 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/atendimento': typeof AtendimentoRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/atendimento': typeof AtendimentoRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/atendimento': typeof AtendimentoRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/agenda'
+    | '/atendimento'
+    | '/configuracoes'
+    | '/redes-sociais'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/agenda' | '/atendimento' | '/configuracoes' | '/redes-sociais'
+  id:
+    | '__root__'
+    | '/'
+    | '/agenda'
+    | '/atendimento'
+    | '/configuracoes'
+    | '/redes-sociais'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgendaRoute: typeof AgendaRoute
+  AtendimentoRoute: typeof AtendimentoRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  RedesSociaisRoute: typeof RedesSociaisRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/redes-sociais': {
+      id: '/redes-sociais'
+      path: '/redes-sociais'
+      fullPath: '/redes-sociais'
+      preLoaderRoute: typeof RedesSociaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/atendimento': {
+      id: '/atendimento'
+      path: '/atendimento'
+      fullPath: '/atendimento'
+      preLoaderRoute: typeof AtendimentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agenda': {
+      id: '/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AgendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +132,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgendaRoute: AgendaRoute,
+  AtendimentoRoute: AtendimentoRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  RedesSociaisRoute: RedesSociaisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

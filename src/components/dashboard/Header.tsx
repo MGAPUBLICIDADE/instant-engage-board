@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, Calendar, Sparkles, X, Plus } from "lucide-react";
+import { Bell, Calendar, X, Plus } from "lucide-react";
 
 export function Header() {
   const [now, setNow] = useState<Date | null>(null);
@@ -22,17 +22,13 @@ export function Header() {
   return (
     <>
       <header className="glass-panel sticky top-0 z-30 flex items-center justify-between gap-4 rounded-2xl px-5 py-3">
-        <div className="flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_8px_24px_-8px_var(--color-primary)]">
-            <Sparkles className="h-5 w-5" strokeWidth={2.5} />
-            <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse-soft rounded-full bg-success ring-2 ring-background" />
-          </div>
+        <div className="flex items-center gap-3 pl-12 lg:pl-0">
           <div className="leading-tight">
             <h1 className="font-display text-base font-bold tracking-tight">
-              CONECTA <span className="text-primary">MGA</span>
+              Painel de <span className="text-primary">Atendimento</span>
             </h1>
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              Mídia Inteligente
+              Pacientes em tempo real
             </p>
           </div>
         </div>
