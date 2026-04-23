@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedesSociaisRouteImport } from './routes/redes-sociais'
+import { Route as PortalMedicoRouteImport } from './routes/portal-medico'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConfiguracoesPacientesRouteImport } from './routes/configuracoes-pacientes'
 import { Route as ConfiguracoesMedicosRouteImport } from './routes/configuracoes-medicos'
@@ -23,6 +24,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const RedesSociaisRoute = RedesSociaisRouteImport.update({
   id: '/redes-sociais',
   path: '/redes-sociais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalMedicoRoute = PortalMedicoRouteImport.update({
+  id: '/portal-medico',
+  path: '/portal-medico',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
   '/login': typeof LoginRoute
+  '/portal-medico': typeof PortalMedicoRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRoutesByTo {
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
   '/login': typeof LoginRoute
+  '/portal-medico': typeof PortalMedicoRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRoutesById {
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
   '/login': typeof LoginRoute
+  '/portal-medico': typeof PortalMedicoRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRouteTypes {
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
     | '/login'
+    | '/portal-medico'
     | '/redes-sociais'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
     | '/login'
+    | '/portal-medico'
     | '/redes-sociais'
   id:
     | '__root__'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
     | '/login'
+    | '/portal-medico'
     | '/redes-sociais'
   fileRoutesById: FileRoutesById
 }
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   ConfiguracoesMedicosRoute: typeof ConfiguracoesMedicosRoute
   ConfiguracoesPacientesRoute: typeof ConfiguracoesPacientesRoute
   LoginRoute: typeof LoginRoute
+  PortalMedicoRoute: typeof PortalMedicoRoute
   RedesSociaisRoute: typeof RedesSociaisRoute
 }
 
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/redes-sociais'
       fullPath: '/redes-sociais'
       preLoaderRoute: typeof RedesSociaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal-medico': {
+      id: '/portal-medico'
+      path: '/portal-medico'
+      fullPath: '/portal-medico'
+      preLoaderRoute: typeof PortalMedicoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfiguracoesMedicosRoute: ConfiguracoesMedicosRoute,
   ConfiguracoesPacientesRoute: ConfiguracoesPacientesRoute,
   LoginRoute: LoginRoute,
+  PortalMedicoRoute: PortalMedicoRoute,
   RedesSociaisRoute: RedesSociaisRoute,
 }
 export const routeTree = rootRouteImport
