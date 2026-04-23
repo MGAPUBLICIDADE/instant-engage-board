@@ -106,7 +106,7 @@ function LoginPage() {
       password: cadastroSenha,
       options: {
         emailRedirectTo: redirectUrl,
-        data: { nome_clinica: cadastro.empresa },
+        data: { nome_empresa: cadastro.empresa },
       },
     });
 
