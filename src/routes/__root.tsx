@@ -14,7 +14,7 @@ import appCss from "../styles.css?url";
 import { AppShell } from "@/components/layout/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { syncPendingEmpresaData } from "@/lib/sync-pending-empresa";
 
 const PUBLIC_ROUTES = ["/login"];
 
@@ -78,27 +78,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   // Aplica dados pendentes da empresa após primeiro login pós-confirmação de email
   useEffect(() => {
     if (!user) return;
-    try {
-      const raw = localStorage.getItem("pending_empresa_data");
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { email: string; payload: Record<string, unknown> };
-      if (parsed.email !== user.email) return;
-      (async () => {
-        const { data: empresa, error } = await supabase
-          .from("empresa")
-          .upsert({ user_id: user.id, ...parsed.payload }, { onConflict: "user_id" })
-          .select()
-          .single();
-        if (error || !empresa) return;
-        await supabase
-          .from("configuracao_empresa")
-          .upsert(
-            { empresa_id: (empresa as { id: string }).id, preferencias: {} },
-            { onConflict: "empresa_id" },
-          );
-        localStorage.removeItem("pending_empresa_data");
-      })();
-    } catch {}
+    void syncPendingEmpresaData({ id: user.id, email: user.email }).catch(() => undefined);
   }, [user]);
 
   useEffect(() => {
