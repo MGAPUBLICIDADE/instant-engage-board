@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedesSociaisRouteImport } from './routes/redes-sociais'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ConfiguracoesPacientesRouteImport } from './routes/configuracoes-pacientes'
+import { Route as ConfiguracoesMedicosRouteImport } from './routes/configuracoes-medicos'
 import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes-dados-clinica'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
@@ -25,6 +27,16 @@ const RedesSociaisRoute = RedesSociaisRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesPacientesRoute = ConfiguracoesPacientesRouteImport.update({
+  id: '/configuracoes-pacientes',
+  path: '/configuracoes-pacientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesMedicosRoute = ConfiguracoesMedicosRouteImport.update({
+  id: '/configuracoes-medicos',
+  path: '/configuracoes-medicos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfiguracoesDadosClinicaRoute =
@@ -60,6 +72,8 @@ export interface FileRoutesByFullPath {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
+  '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
+  '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
   '/login': typeof LoginRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
@@ -69,6 +83,8 @@ export interface FileRoutesByTo {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
+  '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
+  '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
   '/login': typeof LoginRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
@@ -79,6 +95,8 @@ export interface FileRoutesById {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
+  '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
+  '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
   '/login': typeof LoginRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
@@ -90,6 +108,8 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-dados-clinica'
+    | '/configuracoes-medicos'
+    | '/configuracoes-pacientes'
     | '/login'
     | '/redes-sociais'
   fileRoutesByTo: FileRoutesByTo
@@ -99,6 +119,8 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-dados-clinica'
+    | '/configuracoes-medicos'
+    | '/configuracoes-pacientes'
     | '/login'
     | '/redes-sociais'
   id:
@@ -108,6 +130,8 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-dados-clinica'
+    | '/configuracoes-medicos'
+    | '/configuracoes-pacientes'
     | '/login'
     | '/redes-sociais'
   fileRoutesById: FileRoutesById
@@ -118,6 +142,8 @@ export interface RootRouteChildren {
   AtendimentoRoute: typeof AtendimentoRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
+  ConfiguracoesMedicosRoute: typeof ConfiguracoesMedicosRoute
+  ConfiguracoesPacientesRoute: typeof ConfiguracoesPacientesRoute
   LoginRoute: typeof LoginRoute
   RedesSociaisRoute: typeof RedesSociaisRoute
 }
@@ -136,6 +162,20 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes-pacientes': {
+      id: '/configuracoes-pacientes'
+      path: '/configuracoes-pacientes'
+      fullPath: '/configuracoes-pacientes'
+      preLoaderRoute: typeof ConfiguracoesPacientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes-medicos': {
+      id: '/configuracoes-medicos'
+      path: '/configuracoes-medicos'
+      fullPath: '/configuracoes-medicos'
+      preLoaderRoute: typeof ConfiguracoesMedicosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/configuracoes-dados-clinica': {
@@ -182,6 +222,8 @@ const rootRouteChildren: RootRouteChildren = {
   AtendimentoRoute: AtendimentoRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
+  ConfiguracoesMedicosRoute: ConfiguracoesMedicosRoute,
+  ConfiguracoesPacientesRoute: ConfiguracoesPacientesRoute,
   LoginRoute: LoginRoute,
   RedesSociaisRoute: RedesSociaisRoute,
 }
