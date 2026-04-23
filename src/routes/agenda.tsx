@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -11,6 +11,7 @@ import {
   Stethoscope,
   Trash2,
   CalendarCog,
+  Stethoscope as AtenderIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -406,6 +407,7 @@ function SlotItem({
   data: string;
 }) {
   const excluir = useExcluirAgendamento();
+  const navigate = useNavigate();
 
   if (slot.status === "almoco") {
     return (
@@ -442,6 +444,24 @@ function SlotItem({
             {ag.duracao_min} min
           </p>
         </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-8 px-2 text-xs"
+          onClick={() =>
+            navigate({
+              to: "/atendimento",
+              search: {
+                paciente: ag.paciente_id,
+                agendamento: ag.id,
+                medico: medicoId,
+              },
+            })
+          }
+        >
+          <AtenderIcon className="h-3.5 w-3.5" />
+          Atender
+        </Button>
         <Button
           size="icon"
           variant="ghost"
