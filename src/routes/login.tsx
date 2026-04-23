@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { syncPendingEmpresaData } from "@/lib/sync-pending-empresa";
 import {
   Dialog,
   DialogContent,
@@ -71,7 +72,7 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingLogin(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: loginEmail.trim(),
       password: loginSenha,
     });
@@ -82,6 +83,16 @@ function LoginPage() {
         : error.message);
       return;
     }
+
+    try {
+      if (data.user) {
+        await syncPendingEmpresaData({ id: data.user.id, email: data.user.email });
+      }
+    } catch (syncError) {
+      const message = syncError instanceof Error ? syncError.message : "Erro ao salvar dados da clínica";
+      toast.error(message);
+    }
+
     toast.success("Bem-vindo!");
     navigate({ to: "/" });
   };
