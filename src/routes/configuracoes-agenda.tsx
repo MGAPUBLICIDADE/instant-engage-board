@@ -334,7 +334,9 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
       toast.error("Selecione ao menos um dia");
       return;
     }
-    if (form.hora_inicio >= form.hora_fim) {
+    const horaIni = form.dia_inteiro ? "00:00" : form.hora_inicio;
+    const horaFim = form.dia_inteiro ? "23:59" : form.hora_fim;
+    if (horaIni >= horaFim) {
       toast.error("Hora final deve ser maior que hora inicial");
       return;
     }
@@ -343,9 +345,9 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
         await salvar.mutateAsync({
           medico_id: medicoId,
           dia_semana: dia,
-          hora_inicio: form.hora_inicio,
-          hora_fim: form.hora_fim,
-          motivo: form.motivo || null,
+          hora_inicio: horaIni,
+          hora_fim: horaFim,
+          motivo: form.motivo || (form.dia_inteiro ? "Dia inteiro" : null),
           ativo: true,
         });
       }
@@ -355,7 +357,7 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
           : "Bloqueio adicionado",
       );
       setOpen(false);
-      setForm({ dias: [1], hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
+      setForm({ dias: [0, 6], dia_inteiro: true, hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao salvar");
     }
