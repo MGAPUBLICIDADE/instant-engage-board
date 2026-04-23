@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -11,6 +11,7 @@ import {
   Stethoscope,
   Trash2,
   CalendarCog,
+  Stethoscope as AtenderIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
