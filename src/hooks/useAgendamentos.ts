@@ -88,6 +88,65 @@ export function useAgendamentosDia(
   });
 }
 
+/** Lista agendamentos de um dia para TODOS os médicos da clínica (ou filtrado). */
+export function useAgendamentosDiaClinica(
+  data: string | undefined,
+  medicoId?: string,
+) {
+  const { data: empresa } = useEmpresa();
+  const empresaId = empresa?.id;
+
+  return useQuery({
+    queryKey: ["agendamentos_dia_clinica", empresaId, data, medicoId ?? "todos"],
+    enabled: !!empresaId && !!data,
+    queryFn: async (): Promise<Agendamento[]> => {
+      let q = supabase
+        .from("agendamentos")
+        .select("*")
+        .eq("empresa_id", empresaId!)
+        .eq("data", data!);
+      if (medicoId) q = q.eq("medico_id", medicoId);
+      const { data: rows, error } = await q.order("hora", { ascending: true });
+      if (error) throw error;
+      return (rows ?? []) as Agendamento[];
+    },
+  });
+}
+
+/** Atualiza apenas o status de um agendamento. */
+export function useAtualizarStatusAgendamento() {
+  const qc = useQueryClient();
+  const { data: empresa } = useEmpresa();
+  const empresaId = empresa?.id;
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: StatusAgendamento;
+      medico_id: string;
+      data: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("agendamentos")
+        .update({ status })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Agendamento;
+    },
+    onSuccess: (_d, vars) => {
+      const ym = vars.data?.slice(0, 7);
+      qc.invalidateQueries({ queryKey: ["agendamentos_dia", empresaId, vars.medico_id, vars.data] });
+      qc.invalidateQueries({ queryKey: ["agendamentos_dia_clinica", empresaId, vars.data] });
+      qc.invalidateQueries({ queryKey: ["agendamentos_mes", empresaId, vars.medico_id, ym] });
+    },
+  });
+}
+
 export function useSalvarAgendamento() {
   const qc = useQueryClient();
   const { data: empresa } = useEmpresa();
