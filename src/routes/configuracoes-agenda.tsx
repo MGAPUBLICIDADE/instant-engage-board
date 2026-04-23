@@ -310,11 +310,13 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{
     dias: number[];
+    dia_inteiro: boolean;
     hora_inicio: string;
     hora_fim: string;
     motivo: string;
   }>({
-    dias: [1],
+    dias: [0, 6],
+    dia_inteiro: true,
     hora_inicio: "12:00",
     hora_fim: "13:00",
     motivo: "",
@@ -332,7 +334,9 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
       toast.error("Selecione ao menos um dia");
       return;
     }
-    if (form.hora_inicio >= form.hora_fim) {
+    const horaIni = form.dia_inteiro ? "00:00" : form.hora_inicio;
+    const horaFim = form.dia_inteiro ? "23:59" : form.hora_fim;
+    if (horaIni >= horaFim) {
       toast.error("Hora final deve ser maior que hora inicial");
       return;
     }
@@ -341,9 +345,9 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
         await salvar.mutateAsync({
           medico_id: medicoId,
           dia_semana: dia,
-          hora_inicio: form.hora_inicio,
-          hora_fim: form.hora_fim,
-          motivo: form.motivo || null,
+          hora_inicio: horaIni,
+          hora_fim: horaFim,
+          motivo: form.motivo || (form.dia_inteiro ? "Dia inteiro" : null),
           ativo: true,
         });
       }
@@ -353,7 +357,7 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
           : "Bloqueio adicionado",
       );
       setOpen(false);
-      setForm({ dias: [1], hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
+      setForm({ dias: [0, 6], dia_inteiro: true, hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao salvar");
     }
@@ -450,30 +454,44 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
                 Toque para selecionar um ou mais dias.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex items-center justify-between rounded-lg border border-border p-3">
               <div>
-                <Label className="text-xs">Início</Label>
-                <Input
-                  type="time"
-                  value={form.hora_inicio}
-                  onChange={(e) => setForm({ ...form, hora_inicio: e.target.value })}
-                />
+                <Label className="text-sm">Dia inteiro</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Bloqueia o dia todo (00:00 às 23:59).
+                </p>
               </div>
-              <div>
-                <Label className="text-xs">Fim</Label>
-                <Input
-                  type="time"
-                  value={form.hora_fim}
-                  onChange={(e) => setForm({ ...form, hora_fim: e.target.value })}
-                />
-              </div>
+              <Switch
+                checked={form.dia_inteiro}
+                onCheckedChange={(v) => setForm({ ...form, dia_inteiro: v })}
+              />
             </div>
+            {!form.dia_inteiro && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs">Início</Label>
+                  <Input
+                    type="time"
+                    value={form.hora_inicio}
+                    onChange={(e) => setForm({ ...form, hora_inicio: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Fim</Label>
+                  <Input
+                    type="time"
+                    value={form.hora_fim}
+                    onChange={(e) => setForm({ ...form, hora_fim: e.target.value })}
+                  />
+                </div>
+              </div>
+            )}
             <div>
               <Label className="text-xs">Motivo (opcional)</Label>
               <Input
                 value={form.motivo}
                 onChange={(e) => setForm({ ...form, motivo: e.target.value })}
-                placeholder="Almoço, reunião..."
+                placeholder="Folga, plantão, reunião..."
               />
             </div>
           </div>
