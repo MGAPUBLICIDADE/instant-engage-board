@@ -1,0 +1,121 @@
+import { supabase } from "@/integrations/supabase/client";
+
+const EMPRESA_TABLES = ["empresas", "empresa"] as const;
+const CONFIG_TABLES = ["configuracao_empresa", "configuracoes_empresa"] as const;
+
+type EmpresaTableName = (typeof EMPRESA_TABLES)[number];
+type ConfigTableName = (typeof CONFIG_TABLES)[number];
+
+let resolvedEmpresaTable: EmpresaTableName | null = null;
+let resolvedConfigTable: ConfigTableName | null = null;
+
+function isMissingTableError(error: { code?: string | null } | null | undefined) {
+  return error?.code === "PGRST205";
+}
+
+async function runWithTableFallback<TName extends string, TResult extends { error: { code?: string | null } | null }>(
+  candidates: readonly TName[],
+  cachedTable: TName | null,
+  setCachedTable: (table: TName) => void,
+  operation: (table: TName) => Promise<TResult>,
+) {
+  const orderedTables = cachedTable
+    ? [cachedTable, ...candidates.filter((table) => table !== cachedTable)]
+    : [...candidates];
+
+  let lastResult: TResult | null = null;
+
+  for (const table of orderedTables) {
+    const result = await operation(table);
+    if (!isMissingTableError(result.error)) {
+      setCachedTable(table);
+      return result;
+    }
+    lastResult = result;
+  }
+
+  if (lastResult) return lastResult;
+  throw new Error("Não foi possível localizar as tabelas da empresa.");
+}
+
+export async function fetchEmpresaWithConfig(userId: string) {
+  const empresaResult = await runWithTableFallback(
+    EMPRESA_TABLES,
+    resolvedEmpresaTable,
+    (table) => {
+      resolvedEmpresaTable = table;
+    },
+    (table) =>
+      supabase
+        .from(table)
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle(),
+  );
+
+  if (empresaResult.error) throw empresaResult.error;
+  if (!empresaResult.data) return null;
+
+  const configResult = await runWithTableFallback(
+    CONFIG_TABLES,
+    resolvedConfigTable,
+    (table) => {
+      resolvedConfigTable = table;
+    },
+    (table) =>
+      supabase
+        .from(table)
+        .select("*")
+        .eq("empresa_id", (empresaResult.data as { id: string }).id)
+        .maybeSingle(),
+  );
+
+  if (configResult.error && !isMissingTableError(configResult.error)) throw configResult.error;
+
+  return {
+    ...empresaResult.data,
+    configuracao: configResult.data ?? null,
+  };
+}
+
+export async function saveEmpresaWithConfig(payload: { user_id: string } & Record<string, unknown>) {
+  const empresaResult = await runWithTableFallback(
+    EMPRESA_TABLES,
+    resolvedEmpresaTable,
+    (table) => {
+      resolvedEmpresaTable = table;
+    },
+    (table) =>
+      supabase
+        .from(table)
+        .upsert(payload, { onConflict: "user_id" })
+        .select()
+        .single(),
+  );
+
+  if (empresaResult.error) throw empresaResult.error;
+
+  const configResult = await runWithTableFallback(
+    CONFIG_TABLES,
+    resolvedConfigTable,
+    (table) => {
+      resolvedConfigTable = table;
+    },
+    (table) =>
+      supabase
+        .from(table)
+        .upsert(
+          { empresa_id: (empresaResult.data as { id: string }).id, preferencias: {} },
+          { onConflict: "empresa_id" },
+        )
+        .select()
+        .single(),
+  );
+
+  if (configResult.error) throw configResult.error;
+
+  return {
+    ...empresaResult.data,
+    configuracao: configResult.data,
+  };
+}
