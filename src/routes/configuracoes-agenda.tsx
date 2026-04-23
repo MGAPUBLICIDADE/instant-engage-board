@@ -308,33 +308,55 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
   const salvar = useSalvarBloqueioSemana();
   const excluir = useExcluirBloqueioSemana();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    dia_semana: 1,
+  const [form, setForm] = useState<{
+    dias: number[];
+    hora_inicio: string;
+    hora_fim: string;
+    motivo: string;
+  }>({
+    dias: [1],
     hora_inicio: "12:00",
     hora_fim: "13:00",
     motivo: "",
   });
 
-  function handleAdd() {
-    salvar.mutate(
-      {
-        medico_id: medicoId,
-        dia_semana: form.dia_semana,
-        hora_inicio: form.hora_inicio,
-        hora_fim: form.hora_fim,
-        motivo: form.motivo || null,
-        ativo: true,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Bloqueio adicionado");
-          setOpen(false);
-          setForm({ dia_semana: 1, hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
-        },
-        onError: (e: unknown) =>
-          toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
-      },
-    );
+  function toggleDia(i: number) {
+    setForm((f) => ({
+      ...f,
+      dias: f.dias.includes(i) ? f.dias.filter((d) => d !== i) : [...f.dias, i].sort(),
+    }));
+  }
+
+  async function handleAdd() {
+    if (form.dias.length === 0) {
+      toast.error("Selecione ao menos um dia");
+      return;
+    }
+    if (form.hora_inicio >= form.hora_fim) {
+      toast.error("Hora final deve ser maior que hora inicial");
+      return;
+    }
+    try {
+      for (const dia of form.dias) {
+        await salvar.mutateAsync({
+          medico_id: medicoId,
+          dia_semana: dia,
+          hora_inicio: form.hora_inicio,
+          hora_fim: form.hora_fim,
+          motivo: form.motivo || null,
+          ativo: true,
+        });
+      }
+      toast.success(
+        form.dias.length > 1
+          ? `${form.dias.length} bloqueios adicionados`
+          : "Bloqueio adicionado",
+      );
+      setOpen(false);
+      setForm({ dias: [1], hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao salvar");
+    }
   }
 
   return (
@@ -398,28 +420,35 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Novo bloqueio recorrente</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">Dia da semana</Label>
-              <Select
-                value={String(form.dia_semana)}
-                onValueChange={(v) => setForm({ ...form, dia_semana: Number(v) })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DIAS_SEMANA.map((d, i) => (
-                    <SelectItem key={i} value={String(i)}>
-                      {d}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label className="mb-2 block text-xs">Dias da semana</Label>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {DIAS_SEMANA.map((d, i) => {
+                  const selected = form.dias.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => toggleDia(i)}
+                      className={`rounded-lg border px-2 py-2 text-xs font-medium transition ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-surface-elevated hover:bg-surface"
+                      }`}
+                    >
+                      {d.slice(0, 3)}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Toque para selecionar um ou mais dias.
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -472,32 +501,62 @@ function BloqueioDataSection({ medicoId }: { medicoId: string }) {
   const excluir = useExcluirBloqueioData();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
+    intervalo: false,
     data: new Date().toISOString().slice(0, 10),
+    data_fim: new Date().toISOString().slice(0, 10),
     dia_inteiro: true,
     hora_inicio: "08:00",
     hora_fim: "18:00",
     motivo: "",
   });
 
-  function handleAdd() {
-    salvar.mutate(
-      {
-        medico_id: medicoId,
-        data: form.data,
-        dia_inteiro: form.dia_inteiro,
-        hora_inicio: form.dia_inteiro ? null : form.hora_inicio,
-        hora_fim: form.dia_inteiro ? null : form.hora_fim,
-        motivo: form.motivo || null,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Bloqueio adicionado");
-          setOpen(false);
-        },
-        onError: (e: unknown) =>
-          toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
-      },
-    );
+  function gerarDatas(inicio: string, fim: string): string[] {
+    const out: string[] = [];
+    const ini = new Date(inicio + "T00:00:00");
+    const f = new Date(fim + "T00:00:00");
+    if (ini > f) return out;
+    const cur = new Date(ini);
+    while (cur <= f) {
+      out.push(cur.toISOString().slice(0, 10));
+      cur.setDate(cur.getDate() + 1);
+    }
+    return out;
+  }
+
+  async function handleAdd() {
+    if (!form.dia_inteiro && form.hora_inicio >= form.hora_fim) {
+      toast.error("Hora final deve ser maior que hora inicial");
+      return;
+    }
+    const datas = form.intervalo
+      ? gerarDatas(form.data, form.data_fim)
+      : [form.data];
+    if (datas.length === 0) {
+      toast.error("Intervalo de datas inválido");
+      return;
+    }
+    if (datas.length > 90) {
+      toast.error("Intervalo muito longo (máx. 90 dias)");
+      return;
+    }
+    try {
+      for (const d of datas) {
+        await salvar.mutateAsync({
+          medico_id: medicoId,
+          data: d,
+          dia_inteiro: form.dia_inteiro,
+          hora_inicio: form.dia_inteiro ? null : form.hora_inicio,
+          hora_fim: form.dia_inteiro ? null : form.hora_fim,
+          motivo: form.motivo || null,
+        });
+      }
+      toast.success(
+        datas.length > 1 ? `${datas.length} datas bloqueadas` : "Bloqueio adicionado",
+      );
+      setOpen(false);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao salvar");
+    }
   }
 
   return (
@@ -556,18 +615,45 @@ function BloqueioDataSection({ medicoId }: { medicoId: string }) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Bloquear data</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <div>
-              <Label className="text-xs">Data</Label>
-              <Input
-                type="date"
-                value={form.data}
-                onChange={(e) => setForm({ ...form, data: e.target.value })}
+            <div className="flex items-center justify-between rounded-lg border border-border p-3">
+              <div>
+                <Label className="text-sm">Intervalo de datas</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Bloquear de uma data até outra.
+                </p>
+              </div>
+              <Switch
+                checked={form.intervalo}
+                onCheckedChange={(v) =>
+                  setForm({ ...form, intervalo: v, data_fim: form.data })
+                }
               />
+            </div>
+            <div className={form.intervalo ? "grid grid-cols-2 gap-3" : ""}>
+              <div>
+                <Label className="text-xs">{form.intervalo ? "Data início" : "Data"}</Label>
+                <Input
+                  type="date"
+                  value={form.data}
+                  onChange={(e) => setForm({ ...form, data: e.target.value })}
+                />
+              </div>
+              {form.intervalo && (
+                <div>
+                  <Label className="text-xs">Data fim</Label>
+                  <Input
+                    type="date"
+                    value={form.data_fim}
+                    min={form.data}
+                    onChange={(e) => setForm({ ...form, data_fim: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border p-3">
               <Label className="text-sm">Dia inteiro</Label>
