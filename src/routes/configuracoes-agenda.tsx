@@ -615,18 +615,45 @@ function BloqueioDataSection({ medicoId }: { medicoId: string }) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Bloquear data</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <div>
-              <Label className="text-xs">Data</Label>
-              <Input
-                type="date"
-                value={form.data}
-                onChange={(e) => setForm({ ...form, data: e.target.value })}
+            <div className="flex items-center justify-between rounded-lg border border-border p-3">
+              <div>
+                <Label className="text-sm">Intervalo de datas</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Bloquear de uma data até outra.
+                </p>
+              </div>
+              <Switch
+                checked={form.intervalo}
+                onCheckedChange={(v) =>
+                  setForm({ ...form, intervalo: v, data_fim: form.data })
+                }
               />
+            </div>
+            <div className={form.intervalo ? "grid grid-cols-2 gap-3" : ""}>
+              <div>
+                <Label className="text-xs">{form.intervalo ? "Data início" : "Data"}</Label>
+                <Input
+                  type="date"
+                  value={form.data}
+                  onChange={(e) => setForm({ ...form, data: e.target.value })}
+                />
+              </div>
+              {form.intervalo && (
+                <div>
+                  <Label className="text-xs">Data fim</Label>
+                  <Input
+                    type="date"
+                    value={form.data_fim}
+                    min={form.data}
+                    onChange={(e) => setForm({ ...form, data_fim: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border p-3">
               <Label className="text-sm">Dia inteiro</Label>
