@@ -17,7 +17,8 @@ export const Route = createFileRoute("/configuracoes")({
 type SectionTo =
   | "/configuracoes-dados-clinica"
   | "/configuracoes-medicos"
-  | "/configuracoes-pacientes";
+  | "/configuracoes-pacientes"
+  | "/configuracoes-agenda";
 
 type SectionItem = {
   Icon: typeof Building2;
@@ -31,9 +32,7 @@ const sections: SectionItem[] = [
   { Icon: Building2, title: "Dados da clínica", desc: "Nome, endereço e contatos", to: "/configuracoes-dados-clinica", group: "Clínica" },
   { Icon: Stethoscope, title: "Médicos", desc: "Cadastre os profissionais da equipe", to: "/configuracoes-medicos", group: "Clínica" },
   { Icon: Users, title: "Pacientes", desc: "Gerencie o cadastro de pacientes", to: "/configuracoes-pacientes", group: "Clínica" },
-  { Icon: CalendarCog, title: "Configuração de agenda", desc: "Horários de atendimento por médico", group: "Agenda" },
-  { Icon: CalendarX, title: "Bloqueio por data", desc: "Feriados e ausências pontuais", group: "Agenda" },
-  { Icon: CalendarDays, title: "Bloqueio por dia da semana", desc: "Almoço e folgas recorrentes", group: "Agenda" },
+  { Icon: CalendarCog, title: "Configuração de agenda", desc: "Horários, almoço e bloqueios por médico", to: "/configuracoes-agenda", group: "Agenda" },
   { Icon: ClipboardList, title: "Atendimentos", desc: "Histórico clínico e prontuários", group: "Agenda" },
   { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões", group: "Sistema" },
   { Icon: Bell, title: "Notificações", desc: "Configure alertas e lembretes automáticos", group: "Sistema" },
