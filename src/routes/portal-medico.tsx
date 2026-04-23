@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -118,7 +117,7 @@ function PortalMedicoPage() {
   };
 
   return (
-    <AppShell>
+    <>
       <div className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-8 lg:py-10">
         <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -211,7 +210,7 @@ function PortalMedicoPage() {
           onClose={() => setAgendamentoAtivo(null)}
         />
       )}
-    </AppShell>
+    </>
   );
 }
 
