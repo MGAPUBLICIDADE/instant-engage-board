@@ -5,25 +5,27 @@ const CONFIG_TABLES = ["configuracao_empresa", "configuracoes_empresa"] as const
 
 type EmpresaTableName = (typeof EMPRESA_TABLES)[number];
 type ConfigTableName = (typeof CONFIG_TABLES)[number];
+type QueryError = { code?: string | null; message?: string | null };
+type QueryResult<TData> = { data: TData | null; error: QueryError | null };
 
 let resolvedEmpresaTable: EmpresaTableName | null = null;
 let resolvedConfigTable: ConfigTableName | null = null;
 
-function isMissingTableError(error: { code?: string | null } | null | undefined) {
+function isMissingTableError(error: QueryError | null | undefined) {
   return error?.code === "PGRST205";
 }
 
-async function runWithTableFallback<TName extends string, TResult extends { error: { code?: string | null } | null }>(
+async function runWithTableFallback<TName extends string, TData>(
   candidates: readonly TName[],
   cachedTable: TName | null,
   setCachedTable: (table: TName) => void,
-  operation: (table: TName) => Promise<TResult>,
+  operation: (table: TName) => Promise<QueryResult<TData>>,
 ) {
   const orderedTables = cachedTable
     ? [cachedTable, ...candidates.filter((table) => table !== cachedTable)]
     : [...candidates];
 
-  let lastResult: TResult | null = null;
+  let lastResult: QueryResult<TData> | null = null;
 
   for (const table of orderedTables) {
     const result = await operation(table);
@@ -45,8 +47,8 @@ export async function fetchEmpresaWithConfig(userId: string) {
     (table) => {
       resolvedEmpresaTable = table;
     },
-    (table) =>
-      supabase
+    async (table) =>
+      await supabase
         .from(table)
         .select("*")
         .eq("user_id", userId)
@@ -62,8 +64,8 @@ export async function fetchEmpresaWithConfig(userId: string) {
     (table) => {
       resolvedConfigTable = table;
     },
-    (table) =>
-      supabase
+    async (table) =>
+      await supabase
         .from(table)
         .select("*")
         .eq("empresa_id", (empresaResult.data as { id: string }).id)
@@ -85,8 +87,8 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
     (table) => {
       resolvedEmpresaTable = table;
     },
-    (table) =>
-      supabase
+    async (table) =>
+      await supabase
         .from(table)
         .upsert(payload, { onConflict: "user_id" })
         .select()
@@ -101,8 +103,8 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
     (table) => {
       resolvedConfigTable = table;
     },
-    (table) =>
-      supabase
+    async (table) =>
+      await supabase
         .from(table)
         .upsert(
           { empresa_id: (empresaResult.data as { id: string }).id, preferencias: {} },
