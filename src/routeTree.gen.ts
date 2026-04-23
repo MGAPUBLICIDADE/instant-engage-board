@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedesSociaisRouteImport } from './routes/redes-sociais'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes-dados-clinica'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const RedesSociaisRoute = RedesSociaisRouteImport.update({
   id: '/redes-sociais',
   path: '/redes-sociais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfiguracoesDadosClinicaRoute =
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
+  '/login': typeof LoginRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRoutesByTo {
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
+  '/login': typeof LoginRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRoutesById {
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
+  '/login': typeof LoginRoute
   '/redes-sociais': typeof RedesSociaisRoute
 }
 export interface FileRouteTypes {
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-dados-clinica'
+    | '/login'
     | '/redes-sociais'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-dados-clinica'
+    | '/login'
     | '/redes-sociais'
   id:
     | '__root__'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-dados-clinica'
+    | '/login'
     | '/redes-sociais'
   fileRoutesById: FileRoutesById
 }
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   AtendimentoRoute: typeof AtendimentoRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
+  LoginRoute: typeof LoginRoute
   RedesSociaisRoute: typeof RedesSociaisRoute
 }
 
@@ -116,6 +129,13 @@ declare module '@tanstack/react-router' {
       path: '/redes-sociais'
       fullPath: '/redes-sociais'
       preLoaderRoute: typeof RedesSociaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/configuracoes-dados-clinica': {
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   AtendimentoRoute: AtendimentoRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
+  LoginRoute: LoginRoute,
   RedesSociaisRoute: RedesSociaisRoute,
 }
 export const routeTree = rootRouteImport

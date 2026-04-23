@@ -1,10 +1,22 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/layout/AppShell";
 import { Toaster } from "@/components/ui/sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
+const PUBLIC_ROUTES = ["/login"];
 
 function NotFoundComponent() {
   return (
@@ -33,21 +45,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { title: "Conecta MGA" },
+      { name: "description", content: "Mídia Inteligente para clínicas" },
     ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -56,7 +57,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
@@ -68,24 +69,65 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, loading, user } = useAuth();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const isPublic = PUBLIC_ROUTES.includes(pathname);
+
+  // Aplica dados pendentes da clínica após primeiro login pós-confirmação de email
+  useEffect(() => {
+    if (!user) return;
+    try {
+      const raw = localStorage.getItem("pending_clinica_data");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { email: string; payload: Record<string, unknown> };
+      if (parsed.email !== user.email) return;
+      supabase
+        .from("configuracao_clinica")
+        .upsert({ empresa_id: user.id, ...parsed.payload }, { onConflict: "empresa_id" })
+        .then(({ error }) => {
+          if (!error) localStorage.removeItem("pending_clinica_data");
+        });
+    } catch {}
+  }, [user]);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated && !isPublic) {
+      navigate({ to: "/login" });
+    }
+  }, [loading, isAuthenticated, isPublic, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (isPublic) return <>{children}</>;
+  if (!isAuthenticated) return null;
+
+  return <AppShell>{children}</AppShell>;
+}
+
 function RootComponent() {
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
-          queries: {
-            staleTime: 30_000,
-            refetchOnWindowFocus: false,
-          },
+          queries: { staleTime: 30_000, refetchOnWindowFocus: false },
         },
-      })
+      }),
   );
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppShell>
+      <AuthGate>
         <Outlet />
-      </AppShell>
+      </AuthGate>
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );

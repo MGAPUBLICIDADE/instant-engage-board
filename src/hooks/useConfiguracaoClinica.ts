@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./useAuth";
 
 export interface ConfiguracaoClinica {
   id?: string;
   empresa_id: string;
   nome_clinica: string | null;
+  cnpj: string | null;
   endereco: string | null;
   cidade: string | null;
   estado: string | null;
@@ -15,20 +17,18 @@ export interface ConfiguracaoClinica {
   updated_at?: string;
 }
 
-// TEMP: Enquanto não temos auth/multi-tenancy, usamos um empresa_id fixo.
-// Quando integrarmos auth, isso vem do perfil do usuário logado.
-export const DEFAULT_EMPRESA_ID = "00000000-0000-0000-0000-000000000001";
-
-const QUERY_KEY = ["configuracao_clinica", DEFAULT_EMPRESA_ID] as const;
-
 export function useConfiguracaoClinica() {
+  const { user } = useAuth();
+  const empresaId = user?.id;
+
   return useQuery({
-    queryKey: QUERY_KEY,
+    queryKey: ["configuracao_clinica", empresaId],
+    enabled: !!empresaId,
     queryFn: async (): Promise<ConfiguracaoClinica | null> => {
       const { data, error } = await supabase
         .from("configuracao_clinica")
         .select("*")
-        .eq("empresa_id", DEFAULT_EMPRESA_ID)
+        .eq("empresa_id", empresaId!)
         .maybeSingle();
 
       if (error) throw error;
@@ -39,12 +39,15 @@ export function useConfiguracaoClinica() {
 
 export function useSalvarConfiguracaoClinica() {
   const qc = useQueryClient();
+  const { user } = useAuth();
+  const empresaId = user?.id;
+
   return useMutation({
-    mutationFn: async (input: Omit<ConfiguracaoClinica, "id" | "created_at" | "updated_at" | "empresa_id">) => {
-      const payload = {
-        empresa_id: DEFAULT_EMPRESA_ID,
-        ...input,
-      };
+    mutationFn: async (
+      input: Omit<ConfiguracaoClinica, "id" | "created_at" | "updated_at" | "empresa_id">,
+    ) => {
+      if (!empresaId) throw new Error("Usuário não autenticado");
+      const payload = { empresa_id: empresaId, ...input };
       const { data, error } = await supabase
         .from("configuracao_clinica")
         .upsert(payload, { onConflict: "empresa_id" })
@@ -55,7 +58,7 @@ export function useSalvarConfiguracaoClinica() {
       return data as ConfiguracaoClinica;
     },
     onSuccess: (data) => {
-      qc.setQueryData(QUERY_KEY, data);
+      qc.setQueryData(["configuracao_clinica", empresaId], data);
     },
   });
 }
