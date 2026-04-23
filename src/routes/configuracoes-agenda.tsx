@@ -308,33 +308,55 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
   const salvar = useSalvarBloqueioSemana();
   const excluir = useExcluirBloqueioSemana();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    dia_semana: 1,
+  const [form, setForm] = useState<{
+    dias: number[];
+    hora_inicio: string;
+    hora_fim: string;
+    motivo: string;
+  }>({
+    dias: [1],
     hora_inicio: "12:00",
     hora_fim: "13:00",
     motivo: "",
   });
 
-  function handleAdd() {
-    salvar.mutate(
-      {
-        medico_id: medicoId,
-        dia_semana: form.dia_semana,
-        hora_inicio: form.hora_inicio,
-        hora_fim: form.hora_fim,
-        motivo: form.motivo || null,
-        ativo: true,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Bloqueio adicionado");
-          setOpen(false);
-          setForm({ dia_semana: 1, hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
-        },
-        onError: (e: unknown) =>
-          toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
-      },
-    );
+  function toggleDia(i: number) {
+    setForm((f) => ({
+      ...f,
+      dias: f.dias.includes(i) ? f.dias.filter((d) => d !== i) : [...f.dias, i].sort(),
+    }));
+  }
+
+  async function handleAdd() {
+    if (form.dias.length === 0) {
+      toast.error("Selecione ao menos um dia");
+      return;
+    }
+    if (form.hora_inicio >= form.hora_fim) {
+      toast.error("Hora final deve ser maior que hora inicial");
+      return;
+    }
+    try {
+      for (const dia of form.dias) {
+        await salvar.mutateAsync({
+          medico_id: medicoId,
+          dia_semana: dia,
+          hora_inicio: form.hora_inicio,
+          hora_fim: form.hora_fim,
+          motivo: form.motivo || null,
+          ativo: true,
+        });
+      }
+      toast.success(
+        form.dias.length > 1
+          ? `${form.dias.length} bloqueios adicionados`
+          : "Bloqueio adicionado",
+      );
+      setOpen(false);
+      setForm({ dias: [1], hora_inicio: "12:00", hora_fim: "13:00", motivo: "" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao salvar");
+    }
   }
 
   return (
