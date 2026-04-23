@@ -310,11 +310,13 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{
     dias: number[];
+    dia_inteiro: boolean;
     hora_inicio: string;
     hora_fim: string;
     motivo: string;
   }>({
-    dias: [1],
+    dias: [0, 6],
+    dia_inteiro: true,
     hora_inicio: "12:00",
     hora_fim: "13:00",
     motivo: "",
