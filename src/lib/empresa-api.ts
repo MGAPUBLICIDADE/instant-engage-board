@@ -7,6 +7,8 @@ type EmpresaTableName = (typeof EMPRESA_TABLES)[number];
 type ConfigTableName = (typeof CONFIG_TABLES)[number];
 type QueryError = { code?: string | null; message?: string | null };
 type QueryResult<TData> = { data: TData | null; error: QueryError | null };
+type EmpresaRow = Record<string, unknown> & { id: string };
+type ConfigRow = Record<string, unknown>;
 
 let resolvedEmpresaTable: EmpresaTableName | null = null;
 let resolvedConfigTable: ConfigTableName | null = null;
@@ -41,7 +43,7 @@ async function runWithTableFallback<TName extends string, TData>(
 }
 
 export async function fetchEmpresaWithConfig(userId: string) {
-  const empresaResult = await runWithTableFallback(
+  const empresaResult = await runWithTableFallback<EmpresaTableName, EmpresaRow>(
     EMPRESA_TABLES,
     resolvedEmpresaTable,
     (table) => {
@@ -57,8 +59,9 @@ export async function fetchEmpresaWithConfig(userId: string) {
 
   if (empresaResult.error) throw empresaResult.error;
   if (!empresaResult.data) return null;
+  const empresaRow = empresaResult.data;
 
-  const configResult = await runWithTableFallback(
+  const configResult = await runWithTableFallback<ConfigTableName, ConfigRow>(
     CONFIG_TABLES,
     resolvedConfigTable,
     (table) => {
@@ -68,20 +71,20 @@ export async function fetchEmpresaWithConfig(userId: string) {
       await supabase
         .from(table)
         .select("*")
-        .eq("empresa_id", (empresaResult.data as { id: string }).id)
+        .eq("empresa_id", empresaRow.id)
         .maybeSingle(),
   );
 
   if (configResult.error && !isMissingTableError(configResult.error)) throw configResult.error;
 
   return {
-    ...empresaResult.data,
+    ...empresaRow,
     configuracao: configResult.data ?? null,
   };
 }
 
 export async function saveEmpresaWithConfig(payload: { user_id: string } & Record<string, unknown>) {
-  const empresaResult = await runWithTableFallback(
+  const empresaResult = await runWithTableFallback<EmpresaTableName, EmpresaRow>(
     EMPRESA_TABLES,
     resolvedEmpresaTable,
     (table) => {
@@ -96,8 +99,10 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
   );
 
   if (empresaResult.error) throw empresaResult.error;
+  if (!empresaResult.data) throw new Error("Não foi possível salvar os dados da empresa.");
+  const empresaRow = empresaResult.data;
 
-  const configResult = await runWithTableFallback(
+  const configResult = await runWithTableFallback<ConfigTableName, ConfigRow>(
     CONFIG_TABLES,
     resolvedConfigTable,
     (table) => {
@@ -107,7 +112,7 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
       await supabase
         .from(table)
         .upsert(
-          { empresa_id: (empresaResult.data as { id: string }).id, preferencias: {} },
+          { empresa_id: empresaRow.id, preferencias: {} },
           { onConflict: "empresa_id" },
         )
         .select()
@@ -117,7 +122,7 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
   if (configResult.error) throw configResult.error;
 
   return {
-    ...empresaResult.data,
+    ...empresaRow,
     configuracao: configResult.data,
   };
 }
