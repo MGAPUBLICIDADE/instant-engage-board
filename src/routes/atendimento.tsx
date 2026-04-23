@@ -149,6 +149,7 @@ function KanbanDia() {
   const navigate = useNavigate();
   const sp = Route.useSearch();
   const { data: medicos = [] } = useMedicos();
+  const { data: pacientes = [] } = usePacientes();
   const ativos = useMemo(() => medicos.filter((m) => m.ativo), [medicos]);
 
   const hojeIso = toIsoDate(new Date());
