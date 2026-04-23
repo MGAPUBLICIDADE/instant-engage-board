@@ -501,32 +501,62 @@ function BloqueioDataSection({ medicoId }: { medicoId: string }) {
   const excluir = useExcluirBloqueioData();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
+    intervalo: false,
     data: new Date().toISOString().slice(0, 10),
+    data_fim: new Date().toISOString().slice(0, 10),
     dia_inteiro: true,
     hora_inicio: "08:00",
     hora_fim: "18:00",
     motivo: "",
   });
 
-  function handleAdd() {
-    salvar.mutate(
-      {
-        medico_id: medicoId,
-        data: form.data,
-        dia_inteiro: form.dia_inteiro,
-        hora_inicio: form.dia_inteiro ? null : form.hora_inicio,
-        hora_fim: form.dia_inteiro ? null : form.hora_fim,
-        motivo: form.motivo || null,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Bloqueio adicionado");
-          setOpen(false);
-        },
-        onError: (e: unknown) =>
-          toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
-      },
-    );
+  function gerarDatas(inicio: string, fim: string): string[] {
+    const out: string[] = [];
+    const ini = new Date(inicio + "T00:00:00");
+    const f = new Date(fim + "T00:00:00");
+    if (ini > f) return out;
+    const cur = new Date(ini);
+    while (cur <= f) {
+      out.push(cur.toISOString().slice(0, 10));
+      cur.setDate(cur.getDate() + 1);
+    }
+    return out;
+  }
+
+  async function handleAdd() {
+    if (!form.dia_inteiro && form.hora_inicio >= form.hora_fim) {
+      toast.error("Hora final deve ser maior que hora inicial");
+      return;
+    }
+    const datas = form.intervalo
+      ? gerarDatas(form.data, form.data_fim)
+      : [form.data];
+    if (datas.length === 0) {
+      toast.error("Intervalo de datas inválido");
+      return;
+    }
+    if (datas.length > 90) {
+      toast.error("Intervalo muito longo (máx. 90 dias)");
+      return;
+    }
+    try {
+      for (const d of datas) {
+        await salvar.mutateAsync({
+          medico_id: medicoId,
+          data: d,
+          dia_inteiro: form.dia_inteiro,
+          hora_inicio: form.dia_inteiro ? null : form.hora_inicio,
+          hora_fim: form.dia_inteiro ? null : form.hora_fim,
+          motivo: form.motivo || null,
+        });
+      }
+      toast.success(
+        datas.length > 1 ? `${datas.length} datas bloqueadas` : "Bloqueio adicionado",
+      );
+      setOpen(false);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao salvar");
+    }
   }
 
   return (
