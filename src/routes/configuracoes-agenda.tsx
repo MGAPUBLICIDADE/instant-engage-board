@@ -454,26 +454,38 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
                 Toque para selecionar um ou mais dias.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex items-center justify-between rounded-lg border border-border p-3">
               <div>
-                <Label className="text-xs">Início</Label>
-                <Input
-                  type="time"
-                  value={form.hora_inicio}
-                  onChange={(e) => setForm({ ...form, hora_inicio: e.target.value })}
-                />
+                <Label className="text-sm">Dia inteiro</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Bloqueia o dia todo (00:00 às 23:59).
+                </p>
               </div>
-              <div>
-                <Label className="text-xs">Fim</Label>
-                <Input
-                  type="time"
-                  value={form.hora_fim}
-                  onChange={(e) => setForm({ ...form, hora_fim: e.target.value })}
-                />
-              </div>
+              <Switch
+                checked={form.dia_inteiro}
+                onCheckedChange={(v) => setForm({ ...form, dia_inteiro: v })}
+              />
             </div>
-            <div>
-              <Label className="text-xs">Motivo (opcional)</Label>
+            {!form.dia_inteiro && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs">Início</Label>
+                  <Input
+                    type="time"
+                    value={form.hora_inicio}
+                    onChange={(e) => setForm({ ...form, hora_inicio: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Fim</Label>
+                  <Input
+                    type="time"
+                    value={form.hora_fim}
+                    onChange={(e) => setForm({ ...form, hora_fim: e.target.value })}
+                  />
+                </div>
+              </div>
+            )}
               <Input
                 value={form.motivo}
                 onChange={(e) => setForm({ ...form, motivo: e.target.value })}
