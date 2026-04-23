@@ -75,20 +75,29 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const isPublic = PUBLIC_ROUTES.includes(pathname);
 
-  // Aplica dados pendentes da clínica após primeiro login pós-confirmação de email
+  // Aplica dados pendentes da empresa após primeiro login pós-confirmação de email
   useEffect(() => {
     if (!user) return;
     try {
-      const raw = localStorage.getItem("pending_clinica_data");
+      const raw = localStorage.getItem("pending_empresa_data");
       if (!raw) return;
       const parsed = JSON.parse(raw) as { email: string; payload: Record<string, unknown> };
       if (parsed.email !== user.email) return;
-      supabase
-        .from("configuracao_clinica")
-        .upsert({ empresa_id: user.id, ...parsed.payload }, { onConflict: "empresa_id" })
-        .then(({ error }) => {
-          if (!error) localStorage.removeItem("pending_clinica_data");
-        });
+      (async () => {
+        const { data: empresa, error } = await supabase
+          .from("empresa")
+          .upsert({ user_id: user.id, ...parsed.payload }, { onConflict: "user_id" })
+          .select()
+          .single();
+        if (error || !empresa) return;
+        await supabase
+          .from("configuracao_empresa")
+          .upsert(
+            { empresa_id: (empresa as { id: string }).id, preferencias: {} },
+            { onConflict: "empresa_id" },
+          );
+        localStorage.removeItem("pending_empresa_data");
+      })();
     } catch {}
   }, [user]);
 
