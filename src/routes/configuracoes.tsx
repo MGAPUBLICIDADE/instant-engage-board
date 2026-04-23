@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, User, Lock, Palette, Building2, Stethoscope, Users, CalendarCog, CalendarX, CalendarDays, ClipboardList } from "lucide-react";
+import { Bell, User, Lock, Palette, Building2, Stethoscope, Users, CalendarCog, CalendarX, CalendarDays, ClipboardList, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/configuracoes")({
   component: ConfiguracoesPage,
@@ -18,7 +18,8 @@ type SectionTo =
   | "/configuracoes-dados-clinica"
   | "/configuracoes-medicos"
   | "/configuracoes-pacientes"
-  | "/configuracoes-agenda";
+  | "/configuracoes-agenda"
+  | "/configuracoes-base-conhecimento";
 
 type SectionItem = {
   Icon: typeof Building2;
@@ -34,6 +35,7 @@ const sections: SectionItem[] = [
   { Icon: Users, title: "Pacientes", desc: "Gerencie o cadastro de pacientes", to: "/configuracoes-pacientes", group: "Clínica" },
   { Icon: CalendarCog, title: "Configuração de agenda", desc: "Horários, almoço e bloqueios por médico", to: "/configuracoes-agenda", group: "Agenda" },
   { Icon: ClipboardList, title: "Atendimentos", desc: "Histórico clínico e prontuários", group: "Agenda" },
+  { Icon: BookOpen, title: "Base de conhecimento", desc: "Conteúdos (preços, convênios, procedimentos) para a IA", to: "/configuracoes-base-conhecimento", group: "Sistema" },
   { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões", group: "Sistema" },
   { Icon: Bell, title: "Notificações", desc: "Configure alertas e lembretes automáticos", group: "Sistema" },
   { Icon: Palette, title: "Aparência", desc: "Tema, cores e personalização visual", group: "Sistema" },

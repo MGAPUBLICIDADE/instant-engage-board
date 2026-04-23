@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConfiguracoesPacientesRouteImport } from './routes/configuracoes-pacientes'
 import { Route as ConfiguracoesMedicosRouteImport } from './routes/configuracoes-medicos'
 import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes-dados-clinica'
+import { Route as ConfiguracoesBaseConhecimentoRouteImport } from './routes/configuracoes-base-conhecimento'
 import { Route as ConfiguracoesAgendaRouteImport } from './routes/configuracoes-agenda'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
@@ -52,6 +53,12 @@ const ConfiguracoesDadosClinicaRoute =
     path: '/configuracoes-dados-clinica',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ConfiguracoesBaseConhecimentoRoute =
+  ConfiguracoesBaseConhecimentoRouteImport.update({
+    id: '/configuracoes-base-conhecimento',
+    path: '/configuracoes-base-conhecimento',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ConfiguracoesAgendaRoute = ConfiguracoesAgendaRouteImport.update({
   id: '/configuracoes-agenda',
   path: '/configuracoes-agenda',
@@ -84,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
+  '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
@@ -97,6 +105,7 @@ export interface FileRoutesByTo {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
+  '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
@@ -111,6 +120,7 @@ export interface FileRoutesById {
   '/atendimento': typeof AtendimentoRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
+  '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-agenda'
+    | '/configuracoes-base-conhecimento'
     | '/configuracoes-dados-clinica'
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-agenda'
+    | '/configuracoes-base-conhecimento'
     | '/configuracoes-dados-clinica'
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
@@ -152,6 +164,7 @@ export interface FileRouteTypes {
     | '/atendimento'
     | '/configuracoes'
     | '/configuracoes-agenda'
+    | '/configuracoes-base-conhecimento'
     | '/configuracoes-dados-clinica'
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
@@ -166,6 +179,7 @@ export interface RootRouteChildren {
   AtendimentoRoute: typeof AtendimentoRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConfiguracoesAgendaRoute: typeof ConfiguracoesAgendaRoute
+  ConfiguracoesBaseConhecimentoRoute: typeof ConfiguracoesBaseConhecimentoRoute
   ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
   ConfiguracoesMedicosRoute: typeof ConfiguracoesMedicosRoute
   ConfiguracoesPacientesRoute: typeof ConfiguracoesPacientesRoute
@@ -218,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguracoesDadosClinicaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/configuracoes-base-conhecimento': {
+      id: '/configuracoes-base-conhecimento'
+      path: '/configuracoes-base-conhecimento'
+      fullPath: '/configuracoes-base-conhecimento'
+      preLoaderRoute: typeof ConfiguracoesBaseConhecimentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/configuracoes-agenda': {
       id: '/configuracoes-agenda'
       path: '/configuracoes-agenda'
@@ -262,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   AtendimentoRoute: AtendimentoRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConfiguracoesAgendaRoute: ConfiguracoesAgendaRoute,
+  ConfiguracoesBaseConhecimentoRoute: ConfiguracoesBaseConhecimentoRoute,
   ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
   ConfiguracoesMedicosRoute: ConfiguracoesMedicosRoute,
   ConfiguracoesPacientesRoute: ConfiguracoesPacientesRoute,
