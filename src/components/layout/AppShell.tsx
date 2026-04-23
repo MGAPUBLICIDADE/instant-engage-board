@@ -12,7 +12,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useConfiguracaoClinica } from "@/hooks/useConfiguracaoClinica";
+import { useEmpresa } from "@/hooks/useEmpresa";
 
 const nav = [
   { to: "/", label: "Home", Icon: Home },
@@ -27,16 +27,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { data: clinica } = useConfiguracaoClinica();
+  const { data: empresa } = useEmpresa();
 
   const handleLogout = async () => {
     await signOut();
     navigate({ to: "/login" });
   };
 
-  const nomeClinica = clinica?.nome_clinica || "Minha Clínica";
+  const nomeClinica = empresa?.nome || "Minha Clínica";
   const emailUser = user?.email ?? "";
-  const initials = (clinica?.nome_clinica ?? user?.email ?? "U")
+  const initials = (empresa?.nome ?? user?.email ?? "U")
     .split(" ")
     .map((s) => s[0])
     .filter(Boolean)
