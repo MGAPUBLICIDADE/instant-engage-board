@@ -78,7 +78,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   // Aplica dados pendentes da empresa após primeiro login pós-confirmação de email
   useEffect(() => {
     if (!user) return;
-    void syncPendingEmpresaData({ id: user.id, email: user.email }).catch(() => undefined);
+    void syncPendingEmpresaData({ id: user.id, email: user.email, metadata: user.user_metadata }).catch(() => undefined);
   }, [user]);
 
   useEffect(() => {

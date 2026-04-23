@@ -152,6 +152,15 @@ function LoginPage() {
       pending_empresa_email: cadastroEmail.trim(),
     };
 
+    const { data, error } = await supabase.auth.signUp({
+      email: cadastroEmail.trim(),
+      password: cadastroSenha,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: pendingUserMetadata,
+      },
+    });
+
     if (data.session && data.user) {
       // Confirmação desativada - já logado: insere em empresa + configuracao_empresa
       setLoadingCadastro(false);
@@ -166,7 +175,6 @@ function LoginPage() {
     } else {
       // Confirmação ativa - guarda payload p/ aplicar após confirmar email + login
       try {
-        await supabase.auth.updateUser({ data: pendingUserMetadata });
         localStorage.setItem(
           "pending_empresa_data",
           JSON.stringify({ email: cadastroEmail.trim(), payload: empresaPayload }),
