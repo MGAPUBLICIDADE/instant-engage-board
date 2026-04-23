@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, User, Lock, Palette, Building2 } from "lucide-react";
+import { Bell, User, Lock, Palette, Building2, Stethoscope, Users, CalendarCog, CalendarX, CalendarDays, ClipboardList } from "lucide-react";
 
 export const Route = createFileRoute("/configuracoes")({
   component: ConfiguracoesPage,
@@ -14,20 +14,34 @@ export const Route = createFileRoute("/configuracoes")({
   }),
 });
 
+type SectionTo =
+  | "/configuracoes-dados-clinica"
+  | "/configuracoes-medicos"
+  | "/configuracoes-pacientes";
+
 type SectionItem = {
   Icon: typeof Building2;
   title: string;
   desc: string;
-  to?: "/configuracoes-dados-clinica";
+  to?: SectionTo;
+  group: "Cl\u00ednica" | "Agenda" | "Sistema";
 };
 
 const sections: SectionItem[] = [
-  { Icon: Building2, title: "Dados da clínica", desc: "Nome, endereço e contatos", to: "/configuracoes-dados-clinica" },
-  { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões" },
-  { Icon: Bell, title: "Notificações", desc: "Configure alertas e lembretes automáticos" },
-  { Icon: Palette, title: "Aparência", desc: "Tema, cores e personalização visual" },
-  { Icon: Lock, title: "Segurança", desc: "Senha, autenticação e privacidade" },
+  { Icon: Building2, title: "Dados da clínica", desc: "Nome, endereço e contatos", to: "/configuracoes-dados-clinica", group: "Clínica" },
+  { Icon: Stethoscope, title: "Médicos", desc: "Cadastre os profissionais da equipe", to: "/configuracoes-medicos", group: "Clínica" },
+  { Icon: Users, title: "Pacientes", desc: "Gerencie o cadastro de pacientes", to: "/configuracoes-pacientes", group: "Clínica" },
+  { Icon: CalendarCog, title: "Configuração de agenda", desc: "Horários de atendimento por médico", group: "Agenda" },
+  { Icon: CalendarX, title: "Bloqueio por data", desc: "Feriados e ausências pontuais", group: "Agenda" },
+  { Icon: CalendarDays, title: "Bloqueio por dia da semana", desc: "Almoço e folgas recorrentes", group: "Agenda" },
+  { Icon: ClipboardList, title: "Atendimentos", desc: "Histórico clínico e prontuários", group: "Agenda" },
+  { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões", group: "Sistema" },
+  { Icon: Bell, title: "Notificações", desc: "Configure alertas e lembretes automáticos", group: "Sistema" },
+  { Icon: Palette, title: "Aparência", desc: "Tema, cores e personalização visual", group: "Sistema" },
+  { Icon: Lock, title: "Segurança", desc: "Senha, autenticação e privacidade", group: "Sistema" },
 ];
+
+const GRUPOS: Array<SectionItem["group"]> = ["Clínica", "Agenda", "Sistema"];
 
 function ConfiguracoesPage() {
   return (
@@ -40,34 +54,49 @@ function ConfiguracoesPage() {
           </p>
         </header>
 
-        <div className="space-y-2">
-          {sections.map(({ Icon, title, desc, to }) => {
-            const className =
-              "group flex w-full items-center gap-4 rounded-2xl border border-border bg-surface px-4 py-4 text-left transition-all hover:border-primary/40 hover:bg-surface-elevated card-lift";
-            const inner = (
-              <>
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Icon className="h-5 w-5" strokeWidth={2.2} />
-                </div>
-                <div className="flex-1 leading-tight">
-                  <p className="text-sm font-bold">{title}</p>
-                  <p className="text-xs text-muted-foreground">{desc}</p>
-                </div>
-                <span className="text-xs font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                  Abrir →
-                </span>
-              </>
-            );
-            return to ? (
-              <Link key={title} to={to} className={className}>
-                {inner}
-              </Link>
-            ) : (
-              <button key={title} className={className}>
-                {inner}
-              </button>
-            );
-          })}
+        <div className="space-y-8">
+          {GRUPOS.map((grupo) => (
+            <section key={grupo}>
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {grupo}
+              </h2>
+              <div className="space-y-2">
+                {sections
+                  .filter((s) => s.group === grupo)
+                  .map(({ Icon, title, desc, to }) => {
+                    const className =
+                      "group flex w-full items-center gap-4 rounded-2xl border border-border bg-surface px-4 py-4 text-left transition-all hover:border-primary/40 hover:bg-surface-elevated card-lift";
+                    const inner = (
+                      <>
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Icon className="h-5 w-5" strokeWidth={2.2} />
+                        </div>
+                        <div className="flex-1 leading-tight">
+                          <p className="text-sm font-bold">{title}</p>
+                          <p className="text-xs text-muted-foreground">{desc}</p>
+                        </div>
+                        <span className="text-xs font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                          Abrir →
+                        </span>
+                      </>
+                    );
+                    return to ? (
+                      <Link key={title} to={to} className={className}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      <button
+                        key={title}
+                        className={`${className} opacity-60 cursor-not-allowed`}
+                        title="Em breve"
+                      >
+                        {inner}
+                      </button>
+                    );
+                  })}
+              </div>
+            </section>
+          ))}
         </div>
       </div>
     </div>
