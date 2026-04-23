@@ -117,24 +117,6 @@ function LoginPage() {
     setLoadingCadastro(true);
 
     const redirectUrl = `${window.location.origin}/`;
-    const { data, error } = await supabase.auth.signUp({
-      email: cadastroEmail.trim(),
-      password: cadastroSenha,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: { nome_empresa: cadastro.empresa },
-      },
-    });
-
-    if (error) {
-      setLoadingCadastro(false);
-      toast.error(error.message === "User already registered"
-        ? "Este e-mail já está cadastrado"
-        : error.message);
-      return;
-    }
-
-    // Payload da empresa (tabela `empresa`)
     const empresaPayload = {
       nome: cadastro.empresa.trim() || null,
       cnpj: cadastro.cnpj.trim() || null,
@@ -160,6 +142,14 @@ function LoginPage() {
         data: pendingUserMetadata,
       },
     });
+
+    if (error) {
+      setLoadingCadastro(false);
+      toast.error(error.message === "User already registered"
+        ? "Este e-mail já está cadastrado"
+        : error.message);
+      return;
+    }
 
     if (data.session && data.user) {
       // Confirmação desativada - já logado: insere em empresa + configuracao_empresa
