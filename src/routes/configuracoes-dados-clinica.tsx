@@ -6,10 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  useConfiguracaoClinica,
-  useSalvarConfiguracaoClinica,
-} from "@/hooks/useConfiguracaoClinica";
+import { useEmpresa, useSalvarEmpresa } from "@/hooks/useEmpresa";
 
 export const Route = createFileRoute("/configuracoes-dados-clinica")({
   component: DadosClinicaPage,
@@ -25,7 +22,7 @@ export const Route = createFileRoute("/configuracoes-dados-clinica")({
 });
 
 interface FormState {
-  nome_clinica: string;
+  nome: string;
   cnpj: string;
   endereco: string;
   cidade: string;
@@ -36,7 +33,7 @@ interface FormState {
 }
 
 const EMPTY: FormState = {
-  nome_clinica: "",
+  nome: "",
   cnpj: "",
   endereco: "",
   cidade: "",
@@ -47,14 +44,14 @@ const EMPTY: FormState = {
 };
 
 function DadosClinicaPage() {
-  const { data, isLoading, error } = useConfiguracaoClinica();
-  const salvar = useSalvarConfiguracaoClinica();
+  const { data, isLoading, error } = useEmpresa();
+  const salvar = useSalvarEmpresa();
   const [form, setForm] = useState<FormState>(EMPTY);
 
   useEffect(() => {
     if (data) {
       setForm({
-        nome_clinica: data.nome_clinica ?? "",
+        nome: data.nome ?? "",
         cnpj: data.cnpj ?? "",
         endereco: data.endereco ?? "",
         cidade: data.cidade ?? "",
@@ -74,7 +71,7 @@ function DadosClinicaPage() {
     e.preventDefault();
     try {
       await salvar.mutateAsync({
-        nome_clinica: form.nome_clinica.trim() || null,
+        nome: form.nome.trim() || null,
         cnpj: form.cnpj.trim() || null,
         endereco: form.endereco.trim() || null,
         cidade: form.cidade.trim() || null,
@@ -126,11 +123,11 @@ function DadosClinicaPage() {
           className="space-y-5 rounded-2xl border border-border bg-surface p-5 lg:p-6"
         >
           <div className="space-y-2">
-            <Label htmlFor="nome_clinica">Nome da clínica</Label>
+            <Label htmlFor="nome">Nome da empresa / clínica</Label>
             <Input
-              id="nome_clinica"
-              value={form.nome_clinica}
-              onChange={handleChange("nome_clinica")}
+              id="nome"
+              value={form.nome}
+              onChange={handleChange("nome")}
               placeholder="Ex: Clínica MGA Estética"
               disabled={isLoading}
             />
