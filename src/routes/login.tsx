@@ -106,7 +106,7 @@ function LoginPage() {
       password: cadastroSenha,
       options: {
         emailRedirectTo: redirectUrl,
-        data: { nome_clinica: cadastro.empresa },
+        data: { nome_empresa: cadastro.empresa },
       },
     });
 
@@ -118,10 +118,9 @@ function LoginPage() {
       return;
     }
 
-    // Se o cadastro retornar sessão (confirmação desativada), salva direto.
-    // Caso contrário, salva os dados pendentes em localStorage para upsert no primeiro login.
-    const payload = {
-      nome_clinica: cadastro.empresa.trim() || null,
+    // Payload da empresa (tabela `empresa`)
+    const empresaPayload = {
+      nome: cadastro.empresa.trim() || null,
       cnpj: cadastro.cnpj.trim() || null,
       endereco: cadastro.endereco.trim() || null,
       cidade: cadastro.cidade.trim() || null,
@@ -132,13 +131,23 @@ function LoginPage() {
     };
 
     if (data.session && data.user) {
-      // Confirmação desativada - usuário já logado
-      const { error: upErr } = await supabase
-        .from("configuracao_clinica")
-        .upsert({ empresa_id: data.user.id, ...payload }, { onConflict: "empresa_id" });
+      // Confirmação desativada - já logado: insere em empresa + configuracao_empresa
+      const { data: empresa, error: empErr } = await supabase
+        .from("empresa")
+        .upsert({ user_id: data.user.id, ...empresaPayload }, { onConflict: "user_id" })
+        .select()
+        .single();
+      if (!empErr && empresa) {
+        await supabase
+          .from("configuracao_empresa")
+          .upsert(
+            { empresa_id: (empresa as { id: string }).id, preferencias: {} },
+            { onConflict: "empresa_id" },
+          );
+      }
       setLoadingCadastro(false);
-      if (upErr) {
-        toast.error("Cadastro criado, mas falhou ao salvar dados: " + upErr.message);
+      if (empErr) {
+        toast.error("Cadastro criado, mas falhou ao salvar dados: " + empErr.message);
       } else {
         toast.success("Conta criada com sucesso!");
       }
@@ -147,8 +156,8 @@ function LoginPage() {
       // Confirmação ativa - guarda payload p/ aplicar após confirmar email + login
       try {
         localStorage.setItem(
-          "pending_clinica_data",
-          JSON.stringify({ email: cadastroEmail.trim(), payload }),
+          "pending_empresa_data",
+          JSON.stringify({ email: cadastroEmail.trim(), payload: empresaPayload }),
         );
       } catch {}
       setLoadingCadastro(false);
