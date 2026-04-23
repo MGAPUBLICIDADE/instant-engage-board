@@ -87,7 +87,11 @@ function LoginPage() {
 
     try {
       if (data.user) {
-        await syncPendingEmpresaData({ id: data.user.id, email: data.user.email });
+        await syncPendingEmpresaData({
+          id: data.user.id,
+          email: data.user.email,
+          metadata: data.user.user_metadata,
+        });
       }
     } catch (syncError) {
       const message = syncError instanceof Error ? syncError.message : "Erro ao salvar dados da clínica";
@@ -142,6 +146,12 @@ function LoginPage() {
       email: cadastro.email.trim() || null,
     };
 
+    const pendingUserMetadata = {
+      nome_empresa: cadastro.empresa,
+      pending_empresa: empresaPayload,
+      pending_empresa_email: cadastroEmail.trim(),
+    };
+
     if (data.session && data.user) {
       // Confirmação desativada - já logado: insere em empresa + configuracao_empresa
       setLoadingCadastro(false);
@@ -156,6 +166,7 @@ function LoginPage() {
     } else {
       // Confirmação ativa - guarda payload p/ aplicar após confirmar email + login
       try {
+        await supabase.auth.updateUser({ data: pendingUserMetadata });
         localStorage.setItem(
           "pending_empresa_data",
           JSON.stringify({ email: cadastroEmail.trim(), payload: empresaPayload }),

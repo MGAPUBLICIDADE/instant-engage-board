@@ -84,7 +84,7 @@ export async function fetchEmpresaWithConfig(userId: string) {
 }
 
 export async function saveEmpresaWithConfig(payload: { user_id: string } & Record<string, unknown>) {
-  const empresaResult = await runWithTableFallback<EmpresaTableName, EmpresaRow>(
+  const empresaLookupResult = await runWithTableFallback<EmpresaTableName, EmpresaRow>(
     EMPRESA_TABLES,
     resolvedEmpresaTable,
     (table) => {
@@ -93,14 +93,25 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
     async (table) =>
       await supabase
         .from(table)
-        .upsert(payload, { onConflict: "user_id" })
-        .select()
-        .single(),
+        .select("*")
+        .eq("user_id", payload.user_id)
+        .maybeSingle(),
   );
 
-  if (empresaResult.error) throw empresaResult.error;
-  if (!empresaResult.data) throw new Error("Não foi possível salvar os dados da empresa.");
-  const empresaRow = empresaResult.data;
+  if (empresaLookupResult.error) throw empresaLookupResult.error;
+
+  const empresaWriteResult = empresaLookupResult.data
+    ? await supabase
+        .from(resolvedEmpresaTable!)
+        .update(payload)
+        .eq("id", empresaLookupResult.data.id)
+        .select()
+        .single()
+    : await supabase.from(resolvedEmpresaTable!).insert(payload).select().single();
+
+  if (empresaWriteResult.error) throw empresaWriteResult.error;
+  if (!empresaWriteResult.data) throw new Error("Não foi possível salvar os dados da empresa.");
+  const empresaRow = empresaWriteResult.data;
 
   const configResult = await runWithTableFallback<ConfigTableName, ConfigRow>(
     CONFIG_TABLES,
@@ -119,10 +130,27 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
         .single(),
   );
 
+  if (configResult.error && isMissingTableError(configResult.error)) {
+    return {
+      ...empresaRow,
+      configuracao: null,
+    };
+  }
+
   if (configResult.error) throw configResult.error;
+
+  const configWriteResult = configResult.data
+    ? configResult
+    : await supabase
+        .from(resolvedConfigTable!)
+        .insert({ empresa_id: empresaRow.id, preferencias: {} })
+        .select()
+        .single();
+
+  if (configWriteResult.error) throw configWriteResult.error;
 
   return {
     ...empresaRow,
-    configuracao: configResult.data,
+    configuracao: configWriteResult.data,
   };
 }
