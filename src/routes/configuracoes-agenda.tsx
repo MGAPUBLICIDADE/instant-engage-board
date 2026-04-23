@@ -486,10 +486,12 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
                 </div>
               </div>
             )}
+            <div>
+              <Label className="text-xs">Motivo (opcional)</Label>
               <Input
                 value={form.motivo}
                 onChange={(e) => setForm({ ...form, motivo: e.target.value })}
-                placeholder="Almoço, reunião..."
+                placeholder="Folga, plantão, reunião..."
               />
             </div>
           </div>
