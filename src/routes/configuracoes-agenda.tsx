@@ -420,28 +420,35 @@ function BloqueioSemanaSection({ medicoId }: { medicoId: string }) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Novo bloqueio recorrente</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">Dia da semana</Label>
-              <Select
-                value={String(form.dia_semana)}
-                onValueChange={(v) => setForm({ ...form, dia_semana: Number(v) })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DIAS_SEMANA.map((d, i) => (
-                    <SelectItem key={i} value={String(i)}>
-                      {d}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label className="mb-2 block text-xs">Dias da semana</Label>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {DIAS_SEMANA.map((d, i) => {
+                  const selected = form.dias.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => toggleDia(i)}
+                      className={`rounded-lg border px-2 py-2 text-xs font-medium transition ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-surface-elevated hover:bg-surface"
+                      }`}
+                    >
+                      {d.slice(0, 3)}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Toque para selecionar um ou mais dias.
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
