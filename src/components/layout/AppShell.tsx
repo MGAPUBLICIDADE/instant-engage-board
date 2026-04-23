@@ -25,6 +25,24 @@ const nav = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { data: clinica } = useConfiguracaoClinica();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate({ to: "/login" });
+  };
+
+  const nomeClinica = clinica?.nome_clinica || "Minha Clínica";
+  const emailUser = user?.email ?? "";
+  const initials = (clinica?.nome_clinica ?? user?.email ?? "U")
+    .split(" ")
+    .map((s) => s[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
   return (
     <div className="flex min-h-screen w-full bg-background">
@@ -105,16 +123,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        <div className="border-t border-border px-3 py-3">
+        <div className="space-y-2 border-t border-border px-3 py-3">
           <div className="flex items-center gap-3 rounded-xl border border-border bg-surface px-2 py-1.5 pr-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-info to-primary text-xs font-bold text-background">
-              AS
+              {initials}
             </div>
-            <div className="leading-tight">
-              <p className="text-xs font-semibold">Ana Silva</p>
-              <p className="text-[10px] text-muted-foreground">Atendente</p>
+            <div className="min-w-0 flex-1 leading-tight">
+              <p className="truncate text-xs font-semibold">{nomeClinica}</p>
+              <p className="truncate text-[10px] text-muted-foreground">{emailUser}</p>
             </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-elevated hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+            Sair
+          </button>
         </div>
       </aside>
 
