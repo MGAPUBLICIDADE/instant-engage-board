@@ -39,11 +39,11 @@ export function useBaseConhecimento() {
   const empresaId = empresa?.id;
 
   return useQuery({
-    queryKey: ["base_conhecimento", empresaId],
+    queryKey: [TABLE, empresaId],
     enabled: !!empresaId,
     queryFn: async (): Promise<BaseConhecimento[]> => {
       const { data, error } = await supabase
-        .from("base_conhecimento")
+        .from(TABLE)
         .select("*")
         .eq("empresa_id", empresaId!)
         .order("created_at", { ascending: false });
@@ -85,17 +85,17 @@ export function useSalvarConhecimento() {
       const payload = { ...input, empresa_id: empresaId };
       const result = input.id
         ? await supabase
-            .from("base_conhecimento")
+            .from(TABLE)
             .update(payload)
             .eq("id", input.id)
             .select()
             .single()
-        : await supabase.from("base_conhecimento").insert(payload).select().single();
+        : await supabase.from(TABLE).insert(payload).select().single();
       if (result.error) throw result.error;
       return result.data as BaseConhecimento;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["base_conhecimento", empresaId] });
+      qc.invalidateQueries({ queryKey: [TABLE, empresaId] });
     },
   });
 }
@@ -108,7 +108,7 @@ export function useToggleConhecimentoAtivo() {
   return useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
       const { data, error } = await supabase
-        .from("base_conhecimento")
+        .from(TABLE)
         .update({ ativo })
         .eq("id", id)
         .select()
@@ -117,7 +117,7 @@ export function useToggleConhecimentoAtivo() {
       return data as BaseConhecimento;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["base_conhecimento", empresaId] });
+      qc.invalidateQueries({ queryKey: [TABLE, empresaId] });
     },
   });
 }
@@ -138,11 +138,11 @@ export function useExcluirConhecimento() {
           await supabase.storage.from(BUCKET).remove([path]).catch(() => undefined);
         }
       }
-      const { error } = await supabase.from("base_conhecimento").delete().eq("id", item.id);
+      const { error } = await supabase.from(TABLE).delete().eq("id", item.id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["base_conhecimento", empresaId] });
+      qc.invalidateQueries({ queryKey: [TABLE, empresaId] });
     },
   });
 }
