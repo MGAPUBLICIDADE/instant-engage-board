@@ -31,7 +31,8 @@ export type BaseConhecimentoInput = Omit<
   "id" | "empresa_id" | "created_at" | "updated_at"
 >;
 
-const BUCKET = "base-conhecimento";
+const BUCKET = "conhecimento-clinica";
+const TABLE = "conhecimento_clinica";
 
 export function useBaseConhecimento() {
   const { data: empresa } = useEmpresa();
