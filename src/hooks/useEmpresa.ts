@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { fetchEmpresaWithConfig, saveEmpresaWithConfig } from "@/lib/empresa-api";
 
 /**
  * Modelo de dados:
@@ -45,24 +45,7 @@ export function useEmpresa() {
   return useQuery({
     queryKey: ["empresa", userId],
     enabled: !!userId,
-    queryFn: async (): Promise<EmpresaComConfig | null> => {
-      const { data: empresa, error } = await supabase
-        .from("empresa")
-        .select("*")
-        .eq("user_id", userId!)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!empresa) return null;
-
-      const { data: config } = await supabase
-        .from("configuracao_empresa")
-        .select("*")
-        .eq("empresa_id", (empresa as Empresa).id!)
-        .maybeSingle();
-
-      return { ...(empresa as Empresa), configuracao: (config as ConfiguracaoEmpresa) ?? null };
-    },
+    queryFn: async (): Promise<EmpresaComConfig | null> => (await fetchEmpresaWithConfig(userId!)) as EmpresaComConfig | null,
   });
 }
 
@@ -74,31 +57,7 @@ export function useSalvarEmpresa() {
   return useMutation({
     mutationFn: async (input: EmpresaFormInput) => {
       if (!userId) throw new Error("Usuário não autenticado");
-
-      // 1) upsert em empresa (user_id é único)
-      const payload = { user_id: userId, ...input };
-      const { data: empresa, error: empErr } = await supabase
-        .from("empresa")
-        .upsert(payload, { onConflict: "user_id" })
-        .select()
-        .single();
-
-      if (empErr) throw empErr;
-      const empresaRow = empresa as Empresa;
-
-      // 2) garante linha em configuracao_empresa (1:1 com empresa)
-      const { data: config, error: cfgErr } = await supabase
-        .from("configuracao_empresa")
-        .upsert(
-          { empresa_id: empresaRow.id!, preferencias: {} },
-          { onConflict: "empresa_id", ignoreDuplicates: false },
-        )
-        .select()
-        .single();
-
-      if (cfgErr) throw cfgErr;
-
-      return { ...empresaRow, configuracao: config as ConfiguracaoEmpresa };
+      return (await saveEmpresaWithConfig({ user_id: userId, ...input })) as EmpresaComConfig;
     },
     onSuccess: (data) => {
       qc.setQueryData(["empresa", userId], data);

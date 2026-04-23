@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { saveEmpresaWithConfig } from "@/lib/empresa-api";
 import { syncPendingEmpresaData } from "@/lib/sync-pending-empresa";
 import {
   Dialog,
@@ -143,24 +144,13 @@ function LoginPage() {
 
     if (data.session && data.user) {
       // Confirmação desativada - já logado: insere em empresa + configuracao_empresa
-      const { data: empresa, error: empErr } = await supabase
-        .from("empresa")
-        .upsert({ user_id: data.user.id, ...empresaPayload }, { onConflict: "user_id" })
-        .select()
-        .single();
-      if (!empErr && empresa) {
-        await supabase
-          .from("configuracao_empresa")
-          .upsert(
-            { empresa_id: (empresa as { id: string }).id, preferencias: {} },
-            { onConflict: "empresa_id" },
-          );
-      }
       setLoadingCadastro(false);
-      if (empErr) {
-        toast.error("Cadastro criado, mas falhou ao salvar dados: " + empErr.message);
-      } else {
+      try {
+        await saveEmpresaWithConfig({ user_id: data.user.id, ...empresaPayload });
         toast.success("Conta criada com sucesso!");
+      } catch (empErr) {
+        const message = empErr instanceof Error ? empErr.message : "Erro ao salvar dados da clínica";
+        toast.error("Cadastro criado, mas falhou ao salvar dados: " + message);
       }
       navigate({ to: "/" });
     } else {

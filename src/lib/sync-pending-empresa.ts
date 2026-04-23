@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { saveEmpresaWithConfig } from "@/lib/empresa-api";
 
 const PENDING_EMPRESA_KEY = "pending_empresa_data";
 
@@ -40,22 +40,7 @@ export async function syncPendingEmpresaData(user: SyncPendingEmpresaInput) {
     return false;
   }
 
-  const { data: empresa, error: empresaError } = await supabase
-    .from("empresa")
-    .upsert({ user_id: user.id, ...pending.payload }, { onConflict: "user_id" })
-    .select()
-    .single();
-
-  if (empresaError) throw empresaError;
-
-  const { error: configError } = await supabase
-    .from("configuracao_empresa")
-    .upsert(
-      { empresa_id: (empresa as { id: string }).id, preferencias: {} },
-      { onConflict: "empresa_id" },
-    );
-
-  if (configError) throw configError;
+  await saveEmpresaWithConfig({ user_id: user.id, ...pending.payload });
 
   localStorage.removeItem(PENDING_EMPRESA_KEY);
   return true;
