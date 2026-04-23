@@ -205,7 +205,7 @@ function PortalMedicoPage() {
                   key={ag.id}
                   ag={ag}
                   pacienteNome={pac?.nome ?? "Paciente"}
-                  pacienteConvenio={pac?.convenio ?? null}
+                  pacienteContato={pac?.whatsapp ?? pac?.telefone ?? null}
                   onAtender={() => setAgendamentoAtivo(ag)}
                 />
               );
@@ -246,12 +246,12 @@ function EmptyState({
 function ConsultaCard({
   ag,
   pacienteNome,
-  pacienteConvenio,
+  pacienteContato,
   onAtender,
 }: {
   ag: Agendamento;
   pacienteNome: string;
-  pacienteConvenio: string | null;
+  pacienteContato: string | null;
   onAtender: () => void;
 }) {
   const statusLabel: Record<string, string> = {
@@ -297,10 +297,10 @@ function ConsultaCard({
             <ClipboardList className="h-3 w-3" />
             {ag.procedimento || "Consulta"}
           </span>
-          {pacienteConvenio && (
+          {pacienteContato && (
             <span className="inline-flex items-center gap-1">
               <FileText className="h-3 w-3" />
-              {pacienteConvenio}
+              {pacienteContato}
             </span>
           )}
           <span className="hidden sm:inline-flex items-center gap-1">
