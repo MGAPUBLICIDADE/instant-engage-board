@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedesSociaisRouteImport } from './routes/redes-sociais'
 import { Route as PortalMedicoRouteImport } from './routes/portal-medico'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ConfiguracoesWhatsappRouteImport } from './routes/configuracoes-whatsapp'
 import { Route as ConfiguracoesPacientesRouteImport } from './routes/configuracoes-pacientes'
 import { Route as ConfiguracoesMedicosRouteImport } from './routes/configuracoes-medicos'
 import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configuracoes-dados-clinica'
@@ -35,6 +36,11 @@ const PortalMedicoRoute = PortalMedicoRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesWhatsappRoute = ConfiguracoesWhatsappRouteImport.update({
+  id: '/configuracoes-whatsapp',
+  path: '/configuracoes-whatsapp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfiguracoesPacientesRoute = ConfiguracoesPacientesRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
+  '/configuracoes-whatsapp': typeof ConfiguracoesWhatsappRoute
   '/login': typeof LoginRoute
   '/portal-medico': typeof PortalMedicoRoute
   '/redes-sociais': typeof RedesSociaisRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
+  '/configuracoes-whatsapp': typeof ConfiguracoesWhatsappRoute
   '/login': typeof LoginRoute
   '/portal-medico': typeof PortalMedicoRoute
   '/redes-sociais': typeof RedesSociaisRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/configuracoes-dados-clinica': typeof ConfiguracoesDadosClinicaRoute
   '/configuracoes-medicos': typeof ConfiguracoesMedicosRoute
   '/configuracoes-pacientes': typeof ConfiguracoesPacientesRoute
+  '/configuracoes-whatsapp': typeof ConfiguracoesWhatsappRoute
   '/login': typeof LoginRoute
   '/portal-medico': typeof PortalMedicoRoute
   '/redes-sociais': typeof RedesSociaisRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/configuracoes-dados-clinica'
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
+    | '/configuracoes-whatsapp'
     | '/login'
     | '/portal-medico'
     | '/redes-sociais'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/configuracoes-dados-clinica'
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
+    | '/configuracoes-whatsapp'
     | '/login'
     | '/portal-medico'
     | '/redes-sociais'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/configuracoes-dados-clinica'
     | '/configuracoes-medicos'
     | '/configuracoes-pacientes'
+    | '/configuracoes-whatsapp'
     | '/login'
     | '/portal-medico'
     | '/redes-sociais'
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   ConfiguracoesDadosClinicaRoute: typeof ConfiguracoesDadosClinicaRoute
   ConfiguracoesMedicosRoute: typeof ConfiguracoesMedicosRoute
   ConfiguracoesPacientesRoute: typeof ConfiguracoesPacientesRoute
+  ConfiguracoesWhatsappRoute: typeof ConfiguracoesWhatsappRoute
   LoginRoute: typeof LoginRoute
   PortalMedicoRoute: typeof PortalMedicoRoute
   RedesSociaisRoute: typeof RedesSociaisRoute
@@ -209,6 +222,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes-whatsapp': {
+      id: '/configuracoes-whatsapp'
+      path: '/configuracoes-whatsapp'
+      fullPath: '/configuracoes-whatsapp'
+      preLoaderRoute: typeof ConfiguracoesWhatsappRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/configuracoes-pacientes': {
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfiguracoesDadosClinicaRoute: ConfiguracoesDadosClinicaRoute,
   ConfiguracoesMedicosRoute: ConfiguracoesMedicosRoute,
   ConfiguracoesPacientesRoute: ConfiguracoesPacientesRoute,
+  ConfiguracoesWhatsappRoute: ConfiguracoesWhatsappRoute,
   LoginRoute: LoginRoute,
   PortalMedicoRoute: PortalMedicoRoute,
   RedesSociaisRoute: RedesSociaisRoute,
