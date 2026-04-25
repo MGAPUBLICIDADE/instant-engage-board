@@ -121,8 +121,8 @@ function ConfiguracoesWhatsappPage() {
             <Input
               id="numero_whatsapp"
               type="tel"
-              value={form.numero}
-              onChange={handleChange("numero")}
+              value={form.numero_whatsapp}
+              onChange={handleChange("numero_whatsapp")}
               placeholder="Ex: 5511999999999"
               disabled={isLoading}
               required
@@ -146,8 +146,8 @@ function ConfiguracoesWhatsappPage() {
             <Input
               id="token_api"
               type="password"
-              value={form.token}
-              onChange={handleChange("token")}
+              value={form.token_api}
+              onChange={handleChange("token_api")}
               placeholder="Token da Z-API"
               disabled={isLoading}
               required
@@ -158,8 +158,8 @@ function ConfiguracoesWhatsappPage() {
             <Label htmlFor="nome_instancia">Nome da Instância (opcional)</Label>
             <Input
               id="nome_instancia"
-              value={form.nome}
-              onChange={handleChange("nome")}
+              value={form.nome_instancia}
+              onChange={handleChange("nome_instancia")}
               placeholder="Ex: Recepção"
               disabled={isLoading}
             />
