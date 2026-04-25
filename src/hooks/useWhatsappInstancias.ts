@@ -63,20 +63,18 @@ export function useWhatsappInstancia() {
     queryKey: [TABLE, empresaId],
     enabled: !!empresaId,
     queryFn: async (): Promise<WhatsappInstancia | null> => {
-      const errors: string[] = [];
-      for (const columns of SELECTS) {
-        const { data, error } = await supabase
-          .from(TABLE)
-          .select(columns)
-          .eq("empresa_id", empresaId!)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (!error) return normalizeWhatsapp(data as DbRow | null);
-        logDbError("Erro ao carregar instância", columns, error);
-        errors.push(formatDbError(error));
+      const { data, error } = await supabase
+        .from(TABLE)
+        .select("id, empresa_id, numero_whatsapp, instance_id, nome_instancia, ativo, created_at, updated_at")
+        .eq("empresa_id", empresaId!)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) {
+        logDbError("Erro ao carregar instância", "select whatsapp_instancias", error);
+        throw new Error(formatDbError(error));
       }
-      throw new Error(errors.join(" | "));
+      return normalizeWhatsapp(data as DbRow | null);
     },
   });
 }
@@ -89,32 +87,22 @@ export function useSalvarWhatsappInstancia() {
   return useMutation({
     mutationFn: async (input: WhatsappInstanciaInput & { id?: string }) => {
       if (!empresaId) throw new Error("Cadastre a clínica primeiro");
-      const status = input.ativo ? "ativo" : "inativo";
-      const payloads: DbRow[] = [
-        { empresa_id: empresaId, numero_whatsapp: input.numero_whatsapp, instance_id: input.instance_id, token_api: input.token_api, nome_instancia: input.nome_instancia, ativo: input.ativo },
-        { empresa_id: empresaId, numero: input.numero_whatsapp, instance_id: input.instance_id, token: input.token_api, nome: input.nome_instancia, ativo: input.ativo },
-        { empresa_id: empresaId, whatsapp: input.numero_whatsapp, instance_id: input.instance_id, token_api: input.token_api, nome_instancia: input.nome_instancia, status },
-        { empresa_id: empresaId, numero_whatsapp: input.numero_whatsapp, zapi_instance_id: input.instance_id, api_token: input.token_api, instance_name: input.nome_instancia, status },
-      ];
-      if (user?.id) {
-        payloads.push(...payloads.map((payload) => ({ ...payload, user_id: user.id })));
+      const payload = {
+        empresa_id: empresaId,
+        numero_whatsapp: input.numero_whatsapp,
+        instance_id: input.instance_id,
+        token_api: input.token_api,
+        nome_instancia: input.nome_instancia,
+        ativo: input.ativo,
+      };
+      const result = input.id
+        ? await supabase.from(TABLE).update(payload).eq("id", input.id).select().single()
+        : await supabase.from(TABLE).insert(payload).select().single();
+      if (result.error) {
+        logDbError(input.id ? "Erro ao atualizar instância" : "Erro ao inserir instância", payload, result.error);
+        throw new Error(formatDbError(result.error));
       }
-
-      const errors: string[] = [];
-      for (const payload of payloads) {
-        const result = input.id
-          ? await supabase.from(TABLE).update(payload).eq("id", input.id)
-          : await supabase.from(TABLE).upsert(payload, { onConflict: "empresa_id" });
-        if (!result.error) return normalizeWhatsapp({ id: input.id ?? "", ...payload })!;
-        logDbError(input.id ? "Erro ao atualizar instância" : "Erro ao salvar instância", payload, result.error);
-
-        const insert = input.id ? null : await supabase.from(TABLE).insert(payload);
-        if (insert && !insert.error) return normalizeWhatsapp({ id: "", ...payload })!;
-        if (insert?.error) logDbError("Erro ao inserir instância", payload, insert.error);
-
-        errors.push(formatDbError((insert?.error ?? result.error) as DbError));
-      }
-      throw new Error(errors.join(" | "));
+      return normalizeWhatsapp(result.data as DbRow)!;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [TABLE, empresaId] });
