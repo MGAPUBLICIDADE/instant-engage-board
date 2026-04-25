@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, User, Lock, Palette, Building2, Stethoscope, Users, CalendarCog, CalendarX, CalendarDays, ClipboardList, BookOpen } from "lucide-react";
+import { Bell, User, Lock, Palette, Building2, Stethoscope, Users, CalendarCog, ClipboardList, BookOpen, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/configuracoes")({
   component: ConfiguracoesPage,
@@ -19,6 +19,7 @@ type SectionTo =
   | "/configuracoes-medicos"
   | "/configuracoes-pacientes"
   | "/configuracoes-agenda"
+  | "/configuracoes-whatsapp"
   | "/configuracoes-base-conhecimento";
 
 type SectionItem = {
@@ -34,6 +35,7 @@ const sections: SectionItem[] = [
   { Icon: Stethoscope, title: "Médicos", desc: "Cadastre os profissionais da equipe", to: "/configuracoes-medicos", group: "Clínica" },
   { Icon: Users, title: "Pacientes", desc: "Gerencie o cadastro de pacientes", to: "/configuracoes-pacientes", group: "Clínica" },
   { Icon: CalendarCog, title: "Configuração de agenda", desc: "Horários, almoço e bloqueios por médico", to: "/configuracoes-agenda", group: "Agenda" },
+  { Icon: MessageCircle, title: "WhatsApp", desc: "Número, Z-API, token e status da instância", to: "/configuracoes-whatsapp", group: "Sistema" },
   { Icon: ClipboardList, title: "Atendimentos", desc: "Histórico clínico e prontuários", group: "Agenda" },
   { Icon: BookOpen, title: "Base de conhecimento", desc: "Conteúdos (preços, convênios, procedimentos) para a IA", to: "/configuracoes-base-conhecimento", group: "Sistema" },
   { Icon: User, title: "Equipe", desc: "Adicione atendentes e gerencie permissões", group: "Sistema" },
