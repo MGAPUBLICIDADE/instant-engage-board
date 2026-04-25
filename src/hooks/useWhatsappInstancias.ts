@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEmpresa } from "./useEmpresa";
-import { useAuth } from "./useAuth";
 
 export interface WhatsappInstancia {
   id: string;
@@ -24,12 +23,6 @@ const TABLE = "whatsapp_instancias";
 
 type DbRow = Record<string, unknown>;
 type DbError = { message?: string; code?: string; details?: string; hint?: string };
-
-const SELECTS = [
-  "id, empresa_id, numero_whatsapp, instance_id, nome_instancia, ativo, created_at, updated_at",
-  "id, empresa_id, numero, instance_id, nome, ativo, created_at, updated_at",
-  "id, empresa_id, whatsapp, instance_id, nome_instancia, status, created_at, updated_at",
-];
 
 function normalizeWhatsapp(row: DbRow | null): WhatsappInstancia | null {
   if (!row) return null;
@@ -91,7 +84,6 @@ export function useWhatsappInstancia() {
 export function useSalvarWhatsappInstancia() {
   const qc = useQueryClient();
   const { data: empresa } = useEmpresa();
-  const { user } = useAuth();
   const empresaId = empresa?.id;
 
   return useMutation({
