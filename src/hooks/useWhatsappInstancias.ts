@@ -5,10 +5,10 @@ import { useEmpresa } from "./useEmpresa";
 export interface WhatsappInstancia {
   id: string;
   empresa_id: string;
-  numero_whatsapp: string;
+  numero: string;
   instance_id: string;
-  token_api: string;
-  nome_instancia: string | null;
+  token: string;
+  nome: string | null;
   ativo: boolean;
   created_at?: string;
   updated_at?: string;
@@ -31,7 +31,7 @@ export function useWhatsappInstancia() {
     queryFn: async (): Promise<WhatsappInstancia | null> => {
       const { data, error } = await supabase
         .from(TABLE)
-        .select("*")
+        .select("id, empresa_id, numero, instance_id, nome, ativo, created_at, updated_at")
         .eq("empresa_id", empresaId!)
         .order("created_at", { ascending: false })
         .limit(1)
