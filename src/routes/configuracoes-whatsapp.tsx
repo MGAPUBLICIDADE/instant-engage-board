@@ -45,6 +45,7 @@ function ConfiguracoesWhatsappPage() {
   const { data, isLoading, error } = useWhatsappInstancia();
   const salvar = useSalvarWhatsappInstancia();
   const [form, setForm] = useState<FormState>(EMPTY);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (data) {
@@ -64,6 +65,7 @@ function ConfiguracoesWhatsappPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveError(null);
     try {
       await salvar.mutateAsync({
         id: data?.id,
@@ -75,8 +77,11 @@ function ConfiguracoesWhatsappPage() {
       });
       toast.success("Configuração do WhatsApp salva com sucesso!");
     } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro desconhecido ao salvar";
+      console.error("[WhatsApp] Falha final ao salvar", err);
+      setSaveError(message);
       toast.error("Erro ao salvar WhatsApp", {
-        description: err instanceof Error ? err.message : undefined,
+        description: message,
       });
     }
   };
@@ -109,6 +114,12 @@ function ConfiguracoesWhatsappPage() {
         {error && (
           <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
             Erro ao carregar WhatsApp: {error.message}
+          </div>
+        )}
+
+        {saveError && (
+          <div className="mb-4 whitespace-pre-wrap break-words rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+            Erro ao salvar no banco: {saveError}
           </div>
         )}
 
