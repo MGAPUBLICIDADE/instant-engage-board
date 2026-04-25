@@ -48,7 +48,18 @@ function normalizeWhatsapp(row: DbRow | null): WhatsappInstancia | null {
 }
 
 function formatDbError(error: DbError) {
-  return [error.message, error.code, error.details, error.hint].filter(Boolean).join(" · ");
+  const message = [error.message, error.code, error.details, error.hint].filter(Boolean).join(" · ");
+  return message || "Erro desconhecido retornado pelo banco.";
+}
+
+function logDbError(context: string, payload: DbRow | string, error: DbError) {
+  console.error(`[WhatsApp] ${context}`, {
+    payload,
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    hint: error.hint,
+  });
 }
 
 export function useWhatsappInstancia() {
@@ -69,6 +80,7 @@ export function useWhatsappInstancia() {
           .limit(1)
           .maybeSingle();
         if (!error) return normalizeWhatsapp(data as DbRow | null);
+        logDbError("Erro ao carregar instância", columns, error);
         errors.push(formatDbError(error));
       }
       throw new Error(errors.join(" | "));
@@ -102,9 +114,11 @@ export function useSalvarWhatsappInstancia() {
           ? await supabase.from(TABLE).update(payload).eq("id", input.id)
           : await supabase.from(TABLE).upsert(payload, { onConflict: "empresa_id" });
         if (!result.error) return normalizeWhatsapp({ id: input.id ?? "", ...payload })!;
+        logDbError(input.id ? "Erro ao atualizar instância" : "Erro ao salvar instância", payload, result.error);
 
         const insert = input.id ? null : await supabase.from(TABLE).insert(payload);
         if (insert && !insert.error) return normalizeWhatsapp({ id: "", ...payload })!;
+        if (insert?.error) logDbError("Erro ao inserir instância", payload, insert.error);
 
         errors.push(formatDbError((insert?.error ?? result.error) as DbError));
       }
