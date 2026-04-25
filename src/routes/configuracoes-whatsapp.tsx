@@ -26,18 +26,18 @@ export const Route = createFileRoute("/configuracoes-whatsapp")({
 });
 
 interface FormState {
-  numero: string;
+  numero_whatsapp: string;
   instance_id: string;
-  token: string;
-  nome: string;
+  token_api: string;
+  nome_instancia: string;
   ativo: boolean;
 }
 
 const EMPTY: FormState = {
-  numero: "",
+  numero_whatsapp: "",
   instance_id: "",
-  token: "",
-  nome: "",
+  token_api: "",
+  nome_instancia: "",
   ativo: true,
 };
 
@@ -49,10 +49,10 @@ function ConfiguracoesWhatsappPage() {
   useEffect(() => {
     if (data) {
       setForm({
-        numero: data.numero ?? "",
+        numero_whatsapp: data.numero_whatsapp ?? "",
         instance_id: data.instance_id ?? "",
-        token: "",
-        nome: data.nome ?? "",
+        token_api: "",
+        nome_instancia: data.nome_instancia ?? "",
         ativo: data.ativo ?? true,
       });
     }
@@ -67,10 +67,10 @@ function ConfiguracoesWhatsappPage() {
     try {
       await salvar.mutateAsync({
         id: data?.id,
-        numero: form.numero.trim(),
+        numero_whatsapp: form.numero_whatsapp.trim(),
         instance_id: form.instance_id.trim(),
-        token: form.token.trim(),
-        nome: form.nome.trim() || null,
+        token_api: form.token_api.trim(),
+        nome_instancia: form.nome_instancia.trim() || null,
         ativo: form.ativo,
       });
       toast.success("Configuração do WhatsApp salva com sucesso!");
@@ -121,8 +121,8 @@ function ConfiguracoesWhatsappPage() {
             <Input
               id="numero_whatsapp"
               type="tel"
-              value={form.numero}
-              onChange={handleChange("numero")}
+              value={form.numero_whatsapp}
+              onChange={handleChange("numero_whatsapp")}
               placeholder="Ex: 5511999999999"
               disabled={isLoading}
               required
@@ -146,8 +146,8 @@ function ConfiguracoesWhatsappPage() {
             <Input
               id="token_api"
               type="password"
-              value={form.token}
-              onChange={handleChange("token")}
+              value={form.token_api}
+              onChange={handleChange("token_api")}
               placeholder="Token da Z-API"
               disabled={isLoading}
               required
@@ -158,8 +158,8 @@ function ConfiguracoesWhatsappPage() {
             <Label htmlFor="nome_instancia">Nome da Instância (opcional)</Label>
             <Input
               id="nome_instancia"
-              value={form.nome}
-              onChange={handleChange("nome")}
+              value={form.nome_instancia}
+              onChange={handleChange("nome_instancia")}
               placeholder="Ex: Recepção"
               disabled={isLoading}
             />
