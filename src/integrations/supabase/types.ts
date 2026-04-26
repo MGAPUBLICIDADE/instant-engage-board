@@ -691,25 +691,37 @@ export type Database = {
       }
       whatsapp_instancias: {
         Row: {
+          ativo: boolean | null
           created_at: string | null
           empresa_id: string | null
           id: string
           instance_id: string | null
+          nome_instancia: string | null
+          numero_whatsapp: string | null
           token: string | null
+          updated_at: string | null
         }
         Insert: {
+          ativo?: boolean | null
           created_at?: string | null
           empresa_id?: string | null
           id?: string
           instance_id?: string | null
+          nome_instancia?: string | null
+          numero_whatsapp?: string | null
           token?: string | null
+          updated_at?: string | null
         }
         Update: {
+          ativo?: boolean | null
           created_at?: string | null
           empresa_id?: string | null
           id?: string
           instance_id?: string | null
+          nome_instancia?: string | null
+          numero_whatsapp?: string | null
           token?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

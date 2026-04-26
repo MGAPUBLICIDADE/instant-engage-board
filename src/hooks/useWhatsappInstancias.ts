@@ -65,7 +65,7 @@ export function useWhatsappInstancia() {
     queryFn: async (): Promise<WhatsappInstancia | null> => {
       const { data, error } = await supabase
         .from(TABLE)
-        .select("id, empresa_id, instance_id, created_at, token")
+        .select("id, empresa_id, numero_whatsapp, instance_id, nome_instancia, ativo, created_at, updated_at")
         .eq("empresa_id", empresaId!)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -89,8 +89,11 @@ export function useSalvarWhatsappInstancia() {
       if (!empresaId) throw new Error("Cadastre a clínica primeiro");
       const payload = {
         empresa_id: empresaId,
+        numero_whatsapp: input.numero_whatsapp,
         instance_id: input.instance_id,
         token: input.token_api,
+        nome_instancia: input.nome_instancia,
+        ativo: input.ativo,
       };
       const result = input.id
         ? await supabase.from(TABLE).update(payload).eq("id", input.id).select().single()
