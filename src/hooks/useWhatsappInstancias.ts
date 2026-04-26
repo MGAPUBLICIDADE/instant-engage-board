@@ -65,7 +65,7 @@ export function useWhatsappInstancia() {
     queryFn: async (): Promise<WhatsappInstancia | null> => {
       const { data, error } = await supabase
         .from(TABLE)
-        .select("id, empresa_id, numero_whatsapp, instance_id, nome_instancia, ativo, created_at, updated_at")
+        .select("id, empresa_id, instance_id, created_at, token")
         .eq("empresa_id", empresaId!)
         .order("created_at", { ascending: false })
         .limit(1)
