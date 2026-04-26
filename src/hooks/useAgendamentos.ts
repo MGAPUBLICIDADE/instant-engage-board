@@ -54,7 +54,7 @@ export function useAgendamentosMes(medicoId: string | undefined, ym: string) {
       if (error) throw error;
 
       const map: Record<string, number> = {};
-      (data ?? []).forEach((row: { data: string; status: string }) => {
+      (data ?? []).forEach((row: { data: string; status: string | null }) => {
         if (row.status === "cancelado") return;
         map[row.data] = (map[row.data] ?? 0) + 1;
       });
