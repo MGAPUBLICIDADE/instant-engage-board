@@ -89,11 +89,8 @@ export function useSalvarWhatsappInstancia() {
       if (!empresaId) throw new Error("Cadastre a clínica primeiro");
       const payload = {
         empresa_id: empresaId,
-        numero_whatsapp: input.numero_whatsapp,
         instance_id: input.instance_id,
-        token_api: input.token_api,
-        nome_instancia: input.nome_instancia,
-        ativo: input.ativo,
+        token: input.token_api,
       };
       const result = input.id
         ? await supabase.from(TABLE).update(payload).eq("id", input.id).select().single()

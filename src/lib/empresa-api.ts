@@ -1,5 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
+const db = supabase as any;
+
 const EMPRESA_TABLES = ["empresas", "empresa"] as const;
 const CONFIG_TABLES = ["configuracao_empresa", "configuracoes_empresa"] as const;
 
@@ -50,7 +52,7 @@ export async function fetchEmpresaWithConfig(userId: string) {
       resolvedEmpresaTable = table;
     },
     async (table) =>
-      await supabase
+      await db
         .from(table)
         .select("*")
         .eq("user_id", userId)
@@ -68,7 +70,7 @@ export async function fetchEmpresaWithConfig(userId: string) {
       resolvedConfigTable = table;
     },
     async (table) =>
-      await supabase
+      await db
         .from(table)
         .select("*")
         .eq("empresa_id", empresaRow.id)
@@ -91,7 +93,7 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
       resolvedEmpresaTable = table;
     },
     async (table) =>
-      await supabase
+      await db
         .from(table)
         .select("*")
         .eq("user_id", payload.user_id)
@@ -101,13 +103,13 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
   if (empresaLookupResult.error) throw empresaLookupResult.error;
 
   const empresaWriteResult = empresaLookupResult.data
-    ? await supabase
+    ? await db
         .from(resolvedEmpresaTable!)
         .update(payload)
         .eq("id", empresaLookupResult.data.id)
         .select()
         .single()
-    : await supabase.from(resolvedEmpresaTable!).insert(payload).select().single();
+    : await db.from(resolvedEmpresaTable!).insert(payload).select().single();
 
   if (empresaWriteResult.error) throw empresaWriteResult.error;
   if (!empresaWriteResult.data) throw new Error("Não foi possível salvar os dados da empresa.");
@@ -120,7 +122,7 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
       resolvedConfigTable = table;
     },
     async (table) =>
-      await supabase
+      await db
         .from(table)
         .upsert(
           { empresa_id: empresaRow.id, preferencias: {} },
@@ -141,7 +143,7 @@ export async function saveEmpresaWithConfig(payload: { user_id: string } & Recor
 
   const configWriteResult = configResult.data
     ? configResult
-    : await supabase
+    : await db
         .from(resolvedConfigTable!)
         .insert({ empresa_id: empresaRow.id, preferencias: {} })
         .select()
