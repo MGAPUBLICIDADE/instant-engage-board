@@ -34,6 +34,46 @@ export type BaseConhecimentoInput = Omit<
 const BUCKET = "conhecimento-clinica";
 const TABLE = "conhecimento_clinica";
 
+type ConhecimentoRow = {
+  id: string;
+  empresa_id: string | null;
+  titulo: string | null;
+  categoria: string | null;
+  conteudo_texto: string | null;
+  tipo: string | null;
+  url_arquivo: string | null;
+  ativo: boolean | null;
+  created_at: string | null;
+};
+
+function normalizeConhecimento(row: ConhecimentoRow): BaseConhecimento {
+  return {
+    id: row.id,
+    empresa_id: row.empresa_id ?? "",
+    titulo: row.titulo ?? "",
+    categoria: (row.categoria ?? "outro") as CategoriaConhecimento,
+    descricao: null,
+    conteudo: row.conteudo_texto,
+    tipo: (row.tipo ?? "texto") as TipoConhecimento,
+    arquivo_url: row.url_arquivo,
+    arquivo_nome: row.url_arquivo ? row.url_arquivo.split("/").pop() ?? null : null,
+    ativo: row.ativo ?? true,
+    created_at: row.created_at ?? undefined,
+  };
+}
+
+function toDbPayload(input: BaseConhecimentoInput & { id?: string }, empresaId: string) {
+  return {
+    empresa_id: empresaId,
+    titulo: input.titulo,
+    categoria: input.categoria,
+    conteudo_texto: input.conteudo ?? input.descricao,
+    tipo: input.tipo,
+    url_arquivo: input.arquivo_url,
+    ativo: input.ativo,
+  };
+}
+
 export function useBaseConhecimento() {
   const { data: empresa } = useEmpresa();
   const empresaId = empresa?.id;
@@ -48,7 +88,7 @@ export function useBaseConhecimento() {
         .eq("empresa_id", empresaId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as BaseConhecimento[];
+      return ((data ?? []) as ConhecimentoRow[]).map(normalizeConhecimento);
     },
   });
 }
@@ -82,7 +122,7 @@ export function useSalvarConhecimento() {
   return useMutation({
     mutationFn: async (input: BaseConhecimentoInput & { id?: string }) => {
       if (!empresaId) throw new Error("Cadastre a clínica primeiro");
-      const payload = { ...input, empresa_id: empresaId };
+      const payload = toDbPayload(input, empresaId);
       const result = input.id
         ? await supabase
             .from(TABLE)
@@ -92,7 +132,7 @@ export function useSalvarConhecimento() {
             .single()
         : await supabase.from(TABLE).insert(payload).select().single();
       if (result.error) throw result.error;
-      return result.data as BaseConhecimento;
+      return normalizeConhecimento(result.data as ConhecimentoRow);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [TABLE, empresaId] });
@@ -114,7 +154,7 @@ export function useToggleConhecimentoAtivo() {
         .select()
         .single();
       if (error) throw error;
-      return data as BaseConhecimento;
+      return normalizeConhecimento(data as ConhecimentoRow);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [TABLE, empresaId] });

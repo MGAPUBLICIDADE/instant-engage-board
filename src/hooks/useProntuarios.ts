@@ -24,6 +24,10 @@ export type ProntuarioInput = Omit<
   "id" | "empresa_id" | "created_at" | "updated_at"
 >;
 
+function normalizeProntuario(row: Omit<Prontuario, "data"> & { data?: string | null }): Prontuario {
+  return { ...row, data: row.data ?? null };
+}
+
 /** Histórico de prontuários de um paciente (mais recente primeiro). */
 export function useProntuariosPaciente(pacienteId: string | undefined) {
   const { data: empresa } = useEmpresa();
@@ -41,7 +45,7 @@ export function useProntuariosPaciente(pacienteId: string | undefined) {
         .order("data", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Prontuario[];
+      return ((data ?? []) as (Omit<Prontuario, "data"> & { data?: string | null })[]).map(normalizeProntuario);
     },
   });
 }
@@ -62,7 +66,7 @@ export function useProntuarioPorAgendamento(agendamentoId: string | undefined) {
         .eq("agendamento_id", agendamentoId!)
         .maybeSingle();
       if (error) throw error;
-      return (data ?? null) as Prontuario | null;
+      return data ? normalizeProntuario(data as Omit<Prontuario, "data"> & { data?: string | null }) : null;
     },
   });
 }
@@ -75,7 +79,8 @@ export function useSalvarProntuario() {
   return useMutation({
     mutationFn: async (input: ProntuarioInput & { id?: string }) => {
       if (!empresaId) throw new Error("Cadastre a clínica primeiro");
-      const payload = { ...input, empresa_id: empresaId };
+      const { data: _data, ...inputSemData } = input;
+      const payload = { ...inputSemData, empresa_id: empresaId };
       const result = input.id
         ? await supabase
             .from("prontuarios")
@@ -85,7 +90,7 @@ export function useSalvarProntuario() {
             .single()
         : await supabase.from("prontuarios").insert(payload).select().single();
       if (result.error) throw result.error;
-      return result.data as Prontuario;
+      return normalizeProntuario(result.data as Omit<Prontuario, "data"> & { data?: string | null });
     },
     onSuccess: (data) => {
       qc.invalidateQueries({
