@@ -413,6 +413,27 @@ export type Database = {
           },
         ]
       }
+      chatwoot_inboxes: {
+        Row: {
+          created_at: string | null
+          empresa_id: string
+          id: string
+          inbox_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          empresa_id: string
+          id?: string
+          inbox_id: number
+        }
+        Update: {
+          created_at?: string | null
+          empresa_id?: string
+          id?: string
+          inbox_id?: number
+        }
+        Relationships: []
+      }
       conhecimento_clinica: {
         Row: {
           ativo: boolean | null
