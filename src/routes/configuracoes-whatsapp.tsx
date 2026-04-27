@@ -66,6 +66,7 @@ function ConfiguracoesWhatsappPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveError(null);
+    const safeErrorMessage = "Não foi possível salvar a configuração. Tente novamente.";
     try {
       await salvar.mutateAsync({
         id: data?.id,
@@ -77,11 +78,12 @@ function ConfiguracoesWhatsappPage() {
       });
       toast.success("Configuração do WhatsApp salva com sucesso!");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Erro desconhecido ao salvar";
-      console.error("[WhatsApp] Falha final ao salvar", err);
-      setSaveError(message);
+      if (import.meta.env.DEV) {
+        console.warn("[WhatsApp] Falha ao salvar configuração");
+      }
+      setSaveError(safeErrorMessage);
       toast.error("Erro ao salvar WhatsApp", {
-        description: message,
+        description: safeErrorMessage,
       });
     }
   };
@@ -119,7 +121,7 @@ function ConfiguracoesWhatsappPage() {
 
         {saveError && (
           <div className="mb-4 whitespace-pre-wrap break-words rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-            Erro ao salvar no banco: {saveError}
+            {saveError}
           </div>
         )}
 
