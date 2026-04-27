@@ -41,18 +41,17 @@ function normalizeWhatsapp(row: DbRow | null): WhatsappInstancia | null {
 }
 
 function formatDbError(error: DbError) {
-  const message = [error.message, error.code, error.details, error.hint].filter(Boolean).join(" · ");
-  return message || "Erro desconhecido retornado pelo banco.";
+  if (error.code === "42501") {
+    return "Você não tem permissão para salvar esta configuração. Faça login novamente e tente de novo.";
+  }
+
+  return "Não foi possível concluir a operação no banco. Tente novamente em instantes.";
 }
 
-function logDbError(context: string, payload: DbRow | string, error: DbError) {
-  console.error(`[WhatsApp] ${context}`, {
-    payload,
-    message: error.message,
-    code: error.code,
-    details: error.details,
-    hint: error.hint,
-  });
+function logDbError(context: string) {
+  if (import.meta.env.DEV) {
+    console.warn(`[WhatsApp] ${context}`);
+  }
 }
 
 export function useWhatsappInstancia() {
@@ -71,7 +70,7 @@ export function useWhatsappInstancia() {
         .limit(1)
         .maybeSingle();
       if (error) {
-        logDbError("Erro ao carregar instância", "select whatsapp_instancias", error);
+        logDbError("Erro ao carregar instância");
         throw new Error(formatDbError(error));
       }
       return normalizeWhatsapp(data as DbRow | null);
@@ -99,7 +98,7 @@ export function useSalvarWhatsappInstancia() {
         ? await supabase.from(TABLE).update(payload).eq("id", input.id).select().single()
         : await supabase.from(TABLE).insert(payload).select().single();
       if (result.error) {
-        logDbError(input.id ? "Erro ao atualizar instância" : "Erro ao inserir instância", payload, result.error);
+        logDbError(input.id ? "Erro ao atualizar instância" : "Erro ao inserir instância");
         throw new Error(formatDbError(result.error));
       }
       return normalizeWhatsapp(result.data as DbRow)!;
