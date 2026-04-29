@@ -1,16 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Bike, Clock3, Flame, ReceiptText, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Bike,
+  Clock3,
+  Flame,
+  ReceiptText,
+  ShoppingBag,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 import { DeliveryLayout } from "@/components/conectadelivery/DeliveryLayout";
-import { liveOrders, menuHighlights, orderFlow } from "@/lib/conectadelivery-data";
+import { menuHighlights } from "@/lib/conectadelivery-data";
 import burgerHero from "@/assets/conectadelivery-burger-hero.jpg";
 
 export const Route = createFileRoute("/conectadelivery")({
   head: () => ({
     meta: [
       { title: "ConectaDelivery · Gestão premium para hamburguerias" },
-      { name: "description", content: "Painel visual do ConectaDelivery para pedidos, atendimento, cardápio e operação de hamburguerias premium." },
+      {
+        name: "description",
+        content:
+          "Painel visual do ConectaDelivery para pedidos, atendimento, cardápio e operação de hamburguerias premium.",
+      },
       { property: "og:title", content: "ConectaDelivery · Gestão premium para hamburguerias" },
-      { property: "og:description", content: "Controle atendimento, pedidos e cardápio de uma operação delivery de alto padrão." },
+      {
+        property: "og:description",
+        content:
+          "Controle atendimento, pedidos e cardápio de uma operação delivery de alto padrão.",
+      },
     ],
   }),
   component: ConectaDeliveryHome,
@@ -35,17 +52,24 @@ function ConectaDeliveryHome() {
               <Flame className="h-3.5 w-3.5" /> Operação quente agora
             </span>
             <h1 className="mt-6 font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
-              Delivery de alto padrão com atendimento que vende mais.
+              Hamburgueria premium pronta para receber pedidos online.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Visão executiva da hamburgueria: pedidos, cozinha, entrega, ticket médio e itens premium em um só painel.
+              Página empresa do delivery: vitrine da marca, cardápio premium, combos e botão de
+              pedido para o cliente comprar com facilidade.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/conectadelivery-pedidos" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110">
-                Abrir pedidos <ArrowRight className="h-4 w-4" />
+              <Link
+                to="/conectadelivery-cardapio"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110"
+              >
+                Fazer pedido <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/conectadelivery-configuracoes" className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50">
-                Configurar loja
+              <Link
+                to="/conectadelivery-pedidos"
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50"
+              >
+                Painel da cozinha
               </Link>
             </div>
           </div>
@@ -70,23 +94,30 @@ function ConectaDeliveryHome() {
       <section className="mt-6 grid gap-5 xl:grid-cols-[1fr_0.9fr]">
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold">Kanban de Pedidos Delivery</h2>
-            <span className="text-xs font-semibold text-muted-foreground">pedidos · cozinha · entrega</span>
+            <h2 className="font-display text-xl font-bold">Cardápio para pedidos</h2>
+            <span className="text-xs font-semibold text-muted-foreground">
+              cliente · escolha · compra
+            </span>
           </div>
           <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
-            {orderFlow.map(({ title, Icon, count, tone, items }) => (
-              <div key={title} className="rounded-2xl border border-border bg-surface p-4">
+            {menuHighlights.map(({ name, tag, price, Icon }) => (
+              <div key={name} className="rounded-2xl border border-border bg-surface p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2"><Icon className={`h-4 w-4 ${tone}`} /><p className="text-sm font-bold">{title}</p></div>
-                  <span className="rounded-full bg-surface-elevated px-2 py-0.5 text-xs font-bold">{count}</span>
+                  <Icon className="h-5 w-5 text-primary" />
+                  <span className="rounded-full bg-surface-elevated px-2 py-0.5 text-xs font-bold text-primary">
+                    {tag}
+                  </span>
                 </div>
-                <div className="mt-4 space-y-2">
-                  {items.map((item) => (
-                    <div key={item.name} className="rounded-xl border border-border bg-background/45 p-3">
-                      <div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold">{item.name}</p><span className="text-[11px] text-muted-foreground">{item.time}</span></div>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.detail}</p>
-                    </div>
-                  ))}
+                <h3 className="mt-4 font-display text-lg font-bold">{name}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  Blend premium, pão artesanal, molho da casa e finalização de hamburgueria de alto
+                  padrão.
+                </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="font-bold text-primary">{price}</span>
+                  <button className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground transition-all hover:brightness-110">
+                    <ShoppingBag className="h-3.5 w-3.5" /> Pedir
+                  </button>
                 </div>
               </div>
             ))}
@@ -94,27 +125,35 @@ function ConectaDeliveryHome() {
         </div>
 
         <div className="rounded-2xl border border-border bg-surface p-5">
-          <h2 className="font-display text-xl font-bold">Pedidos em destaque</h2>
+          <h2 className="font-display text-xl font-bold">Experiência da loja</h2>
           <div className="mt-4 space-y-3">
-            {liveOrders.slice(0, 3).map((order) => (
-              <div key={order.id} className={`rounded-xl border bg-background/45 p-4 ${order.priority ? "border-primary/45" : "border-border"}`}>
-                <div className="flex items-start justify-between gap-3"><div><p className="font-bold">{order.id} · {order.client}</p><p className="mt-1 text-sm text-muted-foreground">{order.items}</p></div><span className="text-sm font-bold text-primary">{order.value}</span></div>
-                <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground"><span>{order.stage}</span><span>{order.eta}</span></div>
+            {[
+              { title: "Avaliação premium", text: "4.9 estrelas em pedidos recentes", Icon: Star },
+              {
+                title: "Entrega rastreável",
+                text: "Motoboy, retirada e previsão clara",
+                Icon: Bike,
+              },
+              {
+                title: "Compra rápida",
+                text: "Cliente escolhe, paga e acompanha",
+                Icon: ReceiptText,
+              },
+            ].map(({ title, text, Icon }) => (
+              <div key={title} className="rounded-xl border border-border bg-background/45 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold">{title}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{text}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
-
-      <section className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {menuHighlights.map(({ name, tag, price, margin, Icon }) => (
-          <div key={name} className="rounded-2xl border border-border bg-surface p-5">
-            <Icon className="h-5 w-5 text-primary" />
-            <p className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{tag}</p>
-            <h3 className="mt-1 font-display text-lg font-bold">{name}</h3>
-            <div className="mt-4 flex items-center justify-between"><span className="font-bold text-primary">{price}</span><span className="text-xs text-success">margem {margin}</span></div>
-          </div>
-        ))}
       </section>
     </DeliveryLayout>
   );
