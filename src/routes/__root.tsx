@@ -51,8 +51,16 @@ export const Route = createRootRoute({
       { name: "twitter:title", content: "Conecta MGA" },
       { property: "og:description", content: "Mídia Inteligente para clínicas" },
       { name: "twitter:description", content: "Mídia Inteligente para clínicas" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d4985d75-d298-4ce1-883e-faa4d3033122/id-preview-ad62d5c2--7f0fbbcb-4e69-4b9d-96f9-b96b04cbe33e.lovable.app-1777230422150.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d4985d75-d298-4ce1-883e-faa4d3033122/id-preview-ad62d5c2--7f0fbbcb-4e69-4b9d-96f9-b96b04cbe33e.lovable.app-1777230422150.png" },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d4985d75-d298-4ce1-883e-faa4d3033122/id-preview-ad62d5c2--7f0fbbcb-4e69-4b9d-96f9-b96b04cbe33e.lovable.app-1777230422150.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d4985d75-d298-4ce1-883e-faa4d3033122/id-preview-ad62d5c2--7f0fbbcb-4e69-4b9d-96f9-b96b04cbe33e.lovable.app-1777230422150.png",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
@@ -86,7 +94,11 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   // Aplica dados pendentes da empresa após primeiro login pós-confirmação de email
   useEffect(() => {
     if (!user) return;
-    void syncPendingEmpresaData({ id: user.id, email: user.email, metadata: user.user_metadata }).catch(() => undefined);
+    void syncPendingEmpresaData({
+      id: user.id,
+      email: user.email,
+      metadata: user.user_metadata,
+    }).catch(() => undefined);
   }, [user]);
 
   useEffect(() => {
@@ -106,6 +118,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (isPublic) return <>{children}</>;
   if (!isAuthenticated) return null;
+  if (pathname.startsWith("/conectadelivery")) return <>{children}</>;
 
   return <AppShell>{children}</AppShell>;
 }
