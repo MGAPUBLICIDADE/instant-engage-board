@@ -41,11 +41,11 @@ function ConectaDeliveryHome() {
               Página empresa do delivery: vitrine da marca, cardápio premium, combos e botão de pedido para o cliente comprar com facilidade.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/conectadelivery-pedidos" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110">
+              <Link to="/conectadelivery-cardapio" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110">
                 Fazer pedido <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/conectadelivery-configuracoes" className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50">
-                Ver cardápio
+              <Link to="/conectadelivery-pedidos" className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50">
+                Painel da cozinha
               </Link>
             </div>
           </div>
@@ -110,17 +110,6 @@ function ConectaDeliveryHome() {
             ))}
           </div>
         </div>
-      </section>
-
-      <section className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {menuHighlights.map(({ name, tag, price, margin, Icon }) => (
-          <div key={name} className="rounded-2xl border border-border bg-surface p-5">
-            <Icon className="h-5 w-5 text-primary" />
-            <p className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{tag}</p>
-            <h3 className="mt-1 font-display text-lg font-bold">{name}</h3>
-            <div className="mt-4 flex items-center justify-between"><span className="font-bold text-primary">{price}</span><span className="text-xs text-success">margem {margin}</span></div>
-          </div>
-        ))}
       </section>
     </DeliveryLayout>
   );
