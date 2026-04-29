@@ -20,8 +20,12 @@ export function DeliveryLayout({
               <Flame className="h-6 w-6" strokeWidth={2.6} />
             </div>
             <div>
-              <p className="font-display text-lg font-bold leading-none tracking-tight">ConectaDelivery</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Hamburgueria premium</p>
+              <p className="font-display text-lg font-bold leading-none tracking-tight">
+                ConectaDelivery
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Hamburgueria premium
+              </p>
             </div>
           </div>
 
