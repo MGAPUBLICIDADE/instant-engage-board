@@ -19,6 +19,7 @@ import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configur
 import { Route as ConfiguracoesBaseConhecimentoRouteImport } from './routes/configuracoes-base-conhecimento'
 import { Route as ConfiguracoesAgendaRouteImport } from './routes/configuracoes-agenda'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ConectadeliveryPedidosRouteImport } from './routes/conectadelivery-pedidos'
 import { Route as ConectadeliveryRouteImport } from './routes/conectadelivery'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
 import { Route as AgendaRouteImport } from './routes/agenda'
@@ -76,6 +77,11 @@ const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConectadeliveryPedidosRoute = ConectadeliveryPedidosRouteImport.update({
+  id: '/conectadelivery-pedidos',
+  path: '/conectadelivery-pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConectadeliveryRoute = ConectadeliveryRouteImport.update({
   id: '/conectadelivery',
   path: '/conectadelivery',
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
   '/conectadelivery': typeof ConectadeliveryRoute
+  '/conectadelivery-pedidos': typeof ConectadeliveryPedidosRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
   '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
   '/conectadelivery': typeof ConectadeliveryRoute
+  '/conectadelivery-pedidos': typeof ConectadeliveryPedidosRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
   '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
   '/conectadelivery': typeof ConectadeliveryRoute
+  '/conectadelivery-pedidos': typeof ConectadeliveryPedidosRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
   '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/conectadelivery'
+    | '/conectadelivery-pedidos'
     | '/configuracoes'
     | '/configuracoes-agenda'
     | '/configuracoes-base-conhecimento'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/conectadelivery'
+    | '/conectadelivery-pedidos'
     | '/configuracoes'
     | '/configuracoes-agenda'
     | '/configuracoes-base-conhecimento'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/conectadelivery'
+    | '/conectadelivery-pedidos'
     | '/configuracoes'
     | '/configuracoes-agenda'
     | '/configuracoes-base-conhecimento'
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   AgendaRoute: typeof AgendaRoute
   AtendimentoRoute: typeof AtendimentoRoute
   ConectadeliveryRoute: typeof ConectadeliveryRoute
+  ConectadeliveryPedidosRoute: typeof ConectadeliveryPedidosRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConfiguracoesAgendaRoute: typeof ConfiguracoesAgendaRoute
   ConfiguracoesBaseConhecimentoRoute: typeof ConfiguracoesBaseConhecimentoRoute
@@ -286,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conectadelivery-pedidos': {
+      id: '/conectadelivery-pedidos'
+      path: '/conectadelivery-pedidos'
+      fullPath: '/conectadelivery-pedidos'
+      preLoaderRoute: typeof ConectadeliveryPedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conectadelivery': {
       id: '/conectadelivery'
       path: '/conectadelivery'
@@ -322,6 +342,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgendaRoute: AgendaRoute,
   AtendimentoRoute: AtendimentoRoute,
   ConectadeliveryRoute: ConectadeliveryRoute,
+  ConectadeliveryPedidosRoute: ConectadeliveryPedidosRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConfiguracoesAgendaRoute: ConfiguracoesAgendaRoute,
   ConfiguracoesBaseConhecimentoRoute: ConfiguracoesBaseConhecimentoRoute,
