@@ -28,7 +28,7 @@ export type DeliveryNavItem = {
 };
 
 export const deliveryNav: DeliveryNavItem[] = [
-  { to: "/conectadelivery", label: "Home", Icon: Store },
+  { to: "/conectadelivery", label: "Página empresa", Icon: Store },
   { to: "/conectadelivery-pedidos", label: "Pedidos", Icon: ShoppingBag },
   { to: "/conectadelivery-cardapio", label: "Cardápio", Icon: Utensils },
   { to: "/conectadelivery-configuracoes", label: "Configurações", Icon: Settings2 },
