@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Bike, Clock3, Flame, ReceiptText, ShoppingBag, Star, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Bike,
+  Clock3,
+  Flame,
+  ReceiptText,
+  ShoppingBag,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 import { DeliveryLayout } from "@/components/conectadelivery/DeliveryLayout";
 import { menuHighlights } from "@/lib/conectadelivery-data";
 import burgerHero from "@/assets/conectadelivery-burger-hero.jpg";
@@ -8,9 +17,17 @@ export const Route = createFileRoute("/conectadelivery")({
   head: () => ({
     meta: [
       { title: "ConectaDelivery · Gestão premium para hamburguerias" },
-      { name: "description", content: "Painel visual do ConectaDelivery para pedidos, atendimento, cardápio e operação de hamburguerias premium." },
+      {
+        name: "description",
+        content:
+          "Painel visual do ConectaDelivery para pedidos, atendimento, cardápio e operação de hamburguerias premium.",
+      },
       { property: "og:title", content: "ConectaDelivery · Gestão premium para hamburguerias" },
-      { property: "og:description", content: "Controle atendimento, pedidos e cardápio de uma operação delivery de alto padrão." },
+      {
+        property: "og:description",
+        content:
+          "Controle atendimento, pedidos e cardápio de uma operação delivery de alto padrão.",
+      },
     ],
   }),
   component: ConectaDeliveryHome,
@@ -38,13 +55,20 @@ function ConectaDeliveryHome() {
               Hamburgueria premium pronta para receber pedidos online.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Página empresa do delivery: vitrine da marca, cardápio premium, combos e botão de pedido para o cliente comprar com facilidade.
+              Página empresa do delivery: vitrine da marca, cardápio premium, combos e botão de
+              pedido para o cliente comprar com facilidade.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/conectadelivery-cardapio" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110">
+              <Link
+                to="/conectadelivery-cardapio"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110"
+              >
                 Fazer pedido <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/conectadelivery-pedidos" className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50">
+              <Link
+                to="/conectadelivery-pedidos"
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50"
+              >
                 Painel da cozinha
               </Link>
             </div>
@@ -71,17 +95,24 @@ function ConectaDeliveryHome() {
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-display text-xl font-bold">Cardápio para pedidos</h2>
-            <span className="text-xs font-semibold text-muted-foreground">cliente · escolha · compra</span>
+            <span className="text-xs font-semibold text-muted-foreground">
+              cliente · escolha · compra
+            </span>
           </div>
           <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
             {menuHighlights.map(({ name, tag, price, Icon }) => (
               <div key={name} className="rounded-2xl border border-border bg-surface p-4">
                 <div className="flex items-center justify-between">
                   <Icon className="h-5 w-5 text-primary" />
-                  <span className="rounded-full bg-surface-elevated px-2 py-0.5 text-xs font-bold text-primary">{tag}</span>
+                  <span className="rounded-full bg-surface-elevated px-2 py-0.5 text-xs font-bold text-primary">
+                    {tag}
+                  </span>
                 </div>
                 <h3 className="mt-4 font-display text-lg font-bold">{name}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Blend premium, pão artesanal, molho da casa e finalização de hamburgueria de alto padrão.</p>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  Blend premium, pão artesanal, molho da casa e finalização de hamburgueria de alto
+                  padrão.
+                </p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="font-bold text-primary">{price}</span>
                   <button className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground transition-all hover:brightness-110">
@@ -98,13 +129,26 @@ function ConectaDeliveryHome() {
           <div className="mt-4 space-y-3">
             {[
               { title: "Avaliação premium", text: "4.9 estrelas em pedidos recentes", Icon: Star },
-              { title: "Entrega rastreável", text: "Motoboy, retirada e previsão clara", Icon: Bike },
-              { title: "Compra rápida", text: "Cliente escolhe, paga e acompanha", Icon: ReceiptText },
+              {
+                title: "Entrega rastreável",
+                text: "Motoboy, retirada e previsão clara",
+                Icon: Bike,
+              },
+              {
+                title: "Compra rápida",
+                text: "Cliente escolhe, paga e acompanha",
+                Icon: ReceiptText,
+              },
             ].map(({ title, text, Icon }) => (
               <div key={title} className="rounded-xl border border-border bg-background/45 p-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon className="h-5 w-5" /></div>
-                  <div><p className="font-bold">{title}</p><p className="mt-1 text-sm text-muted-foreground">{text}</p></div>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold">{title}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{text}</p>
+                  </div>
                 </div>
               </div>
             ))}
