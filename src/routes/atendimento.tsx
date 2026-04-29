@@ -231,7 +231,7 @@ function KanbanDia() {
     setActiveId(null);
     const overId = e.over?.id as StatusAgendamento | undefined;
     if (!overId) return;
-    const ag = agendamentos.find((a) => a.id === e.active.id);
+    const ag = agendamentosClinica.find((a) => a.id === e.active.id);
     if (!ag || ag.status === overId) return;
     atualizarStatus.mutate(
       { id: ag.id, status: overId, medico_id: ag.medico_id, data: ag.data },
