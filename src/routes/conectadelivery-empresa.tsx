@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight,
   Bike,
@@ -77,7 +77,7 @@ export const Route = createFileRoute("/conectadelivery-empresa")({
 
 function DeliveryEmpresaPage() {
   return (
-    <DeliveryLayout>
+    <DeliveryLayout publicStorefront>
       <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="relative min-h-[430px] overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-elevated)] md:p-8">
           <img
@@ -107,12 +107,6 @@ function DeliveryEmpresaPage() {
               >
                 Fazer pedido <ArrowRight className="h-4 w-4" />
               </a>
-              <Link
-                to="/conectadelivery-pedidos"
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-elevated px-5 py-3 text-sm font-semibold hover:border-primary/50"
-              >
-                Painel da cozinha
-              </Link>
             </div>
             <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-3">
               {["Entrega 25-35 min", "Pix e cartão", "Retirada disponível"].map((item) => (

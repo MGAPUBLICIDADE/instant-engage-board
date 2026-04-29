@@ -2,7 +2,13 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Flame, RadioTower } from "lucide-react";
 import { deliveryNav } from "@/lib/conectadelivery-data";
 
-export function DeliveryLayout({ children }: { children: React.ReactNode }) {
+export function DeliveryLayout({
+  children,
+  publicStorefront = false,
+}: {
+  children: React.ReactNode;
+  publicStorefront?: boolean;
+}) {
   const { pathname } = useLocation();
 
   return (
@@ -19,25 +25,27 @@ export function DeliveryLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <nav className="flex gap-2 overflow-x-auto pb-1 xl:pb-0">
-            {deliveryNav.map(({ to, label, Icon }) => {
-              const active = pathname === to;
-              return (
-                <Link
-                  key={to}
-                  to={to}
-                  className={`inline-flex min-w-fit items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition-all ${
-                    active
-                      ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_28px_-16px_var(--color-primary)]"
-                      : "border-border bg-surface text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
+          {!publicStorefront && (
+            <nav className="flex gap-2 overflow-x-auto pb-1 xl:pb-0">
+              {deliveryNav.map(({ to, label, Icon }) => {
+                const active = pathname === to;
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    className={`inline-flex min-w-fit items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition-all ${
+                      active
+                        ? "border-primary bg-primary text-primary-foreground shadow-[0_10px_28px_-16px_var(--color-primary)]"
+                        : "border-border bg-surface text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
 
           <div className="hidden items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-success xl:flex">
             <RadioTower className="h-4 w-4" />
