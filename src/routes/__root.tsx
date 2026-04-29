@@ -16,7 +16,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { syncPendingEmpresaData } from "@/lib/sync-pending-empresa";
 
-const PUBLIC_ROUTES = ["/login"];
+const PUBLIC_ROUTES = ["/login", "/conectadelivery-empresa"];
 
 function NotFoundComponent() {
   return (
