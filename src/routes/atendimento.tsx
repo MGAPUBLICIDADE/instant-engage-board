@@ -139,10 +139,10 @@ function Atendimento() {
  * ============================================================ */
 
 const COLUNAS: { id: StatusAgendamento; titulo: string; tone: string; dot: string }[] = [
-  { id: "agendado", titulo: "Agendados", tone: "border-info/40", dot: "bg-info" },
-  { id: "confirmado", titulo: "Confirmados", tone: "border-warning/40", dot: "bg-warning" },
-  { id: "atendido", titulo: "Atendidos", tone: "border-success/40", dot: "bg-success" },
-  { id: "faltou", titulo: "Faltaram", tone: "border-destructive/40", dot: "bg-destructive" },
+  { id: "agendado", titulo: "Consultas agendadas", tone: "border-info/40", dot: "bg-info" },
+  { id: "confirmado", titulo: "Consultas confirmadas", tone: "border-warning/40", dot: "bg-warning" },
+  { id: "atendido", titulo: "Pacientes atendidos", tone: "border-success/40", dot: "bg-success" },
+  { id: "faltou", titulo: "Pacientes que faltaram", tone: "border-destructive/40", dot: "bg-destructive" },
 ];
 
 function KanbanDia() {
@@ -216,9 +216,9 @@ function KanbanDia() {
       <div className="mx-auto max-w-[1400px]">
         <header className="mb-5 flex flex-wrap items-center gap-3">
           <div className="flex-1 min-w-[200px]">
-            <h1 className="font-display text-2xl font-bold tracking-tight">Atendimento</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight">Kanban da Clínica</h1>
             <p className="text-sm text-muted-foreground">
-              Fila do dia · arraste cards entre colunas para mudar o status
+              Consultas, pacientes e médicos do dia
             </p>
           </div>
 
@@ -415,7 +415,7 @@ function Coluna({
         ))}
         {agendamentos.length === 0 && (
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border/40 py-6 text-[11px] text-muted-foreground">
-            Vazio
+            Nenhuma consulta
           </div>
         )}
       </div>
