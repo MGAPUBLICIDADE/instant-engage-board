@@ -19,6 +19,7 @@ import { Route as ConfiguracoesDadosClinicaRouteImport } from './routes/configur
 import { Route as ConfiguracoesBaseConhecimentoRouteImport } from './routes/configuracoes-base-conhecimento'
 import { Route as ConfiguracoesAgendaRouteImport } from './routes/configuracoes-agenda'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ConectadeliveryRouteImport } from './routes/conectadelivery'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
@@ -75,6 +76,11 @@ const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConectadeliveryRoute = ConectadeliveryRouteImport.update({
+  id: '/conectadelivery',
+  path: '/conectadelivery',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AtendimentoRoute = AtendimentoRouteImport.update({
   id: '/atendimento',
   path: '/atendimento',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
+  '/conectadelivery': typeof ConectadeliveryRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
   '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
+  '/conectadelivery': typeof ConectadeliveryRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
   '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
+  '/conectadelivery': typeof ConectadeliveryRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
   '/configuracoes-base-conhecimento': typeof ConfiguracoesBaseConhecimentoRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agenda'
     | '/atendimento'
+    | '/conectadelivery'
     | '/configuracoes'
     | '/configuracoes-agenda'
     | '/configuracoes-base-conhecimento'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agenda'
     | '/atendimento'
+    | '/conectadelivery'
     | '/configuracoes'
     | '/configuracoes-agenda'
     | '/configuracoes-base-conhecimento'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agenda'
     | '/atendimento'
+    | '/conectadelivery'
     | '/configuracoes'
     | '/configuracoes-agenda'
     | '/configuracoes-base-conhecimento'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendaRoute: typeof AgendaRoute
   AtendimentoRoute: typeof AtendimentoRoute
+  ConectadeliveryRoute: typeof ConectadeliveryRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConfiguracoesAgendaRoute: typeof ConfiguracoesAgendaRoute
   ConfiguracoesBaseConhecimentoRoute: typeof ConfiguracoesBaseConhecimentoRoute
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conectadelivery': {
+      id: '/conectadelivery'
+      path: '/conectadelivery'
+      fullPath: '/conectadelivery'
+      preLoaderRoute: typeof ConectadeliveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/atendimento': {
       id: '/atendimento'
       path: '/atendimento'
@@ -301,6 +321,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendaRoute: AgendaRoute,
   AtendimentoRoute: AtendimentoRoute,
+  ConectadeliveryRoute: ConectadeliveryRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConfiguracoesAgendaRoute: ConfiguracoesAgendaRoute,
   ConfiguracoesBaseConhecimentoRoute: ConfiguracoesBaseConhecimentoRoute,
@@ -315,3 +336,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
