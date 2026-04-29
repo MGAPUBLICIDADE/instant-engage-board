@@ -11,7 +11,6 @@ import {
   X,
   LogOut,
   Stethoscope,
-  UtensilsCrossed,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEmpresa } from "@/hooks/useEmpresa";
@@ -22,7 +21,6 @@ const nav = [
   { to: "/atendimento", label: "Atendimento", Icon: MessageSquare },
   { to: "/portal-medico", label: "Portal Médico", Icon: Stethoscope },
   { to: "/redes-sociais", label: "Redes Sociais", Icon: Share2 },
-  { to: "/conectadelivery", label: "ConectaDelivery", Icon: UtensilsCrossed },
   { to: "/configuracoes", label: "Configurações", Icon: Settings },
 ] as const;
 
@@ -99,8 +97,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <nav className="flex-1 space-y-1 px-3 py-2">
           {nav.map(({ to, label, Icon }) => {
-            const active =
-              to === "/" ? pathname === "/" : pathname.startsWith(to);
+            const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
             return (
               <Link
                 key={to}
