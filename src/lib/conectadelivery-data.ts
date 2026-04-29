@@ -36,7 +36,7 @@ export const deliveryNav: DeliveryNavItem[] = [
 
 export const orderFlow = [
   {
-    title: "Novo pedido",
+    title: "Pedidos recebidos",
     Icon: MessageSquare,
     count: 8,
     tone: "text-info",
@@ -46,7 +46,7 @@ export const orderFlow = [
     ],
   },
   {
-    title: "Montando combo",
+    title: "Itens em preparo",
     Icon: Sparkles,
     count: 5,
     tone: "text-primary",
@@ -56,7 +56,7 @@ export const orderFlow = [
     ],
   },
   {
-    title: "Pedido montado",
+    title: "Aguardando pagamento",
     Icon: PackageCheck,
     count: 11,
     tone: "text-warning",
@@ -66,7 +66,7 @@ export const orderFlow = [
     ],
   },
   {
-    title: "Pagamento confirmado",
+    title: "Liberado para entrega",
     Icon: CheckCircle2,
     count: 19,
     tone: "text-success",
