@@ -11,7 +11,6 @@ import {
   X,
   LogOut,
   Stethoscope,
-  UtensilsCrossed,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useEmpresa } from "@/hooks/useEmpresa";
@@ -22,7 +21,6 @@ const nav = [
   { to: "/atendimento", label: "Atendimento", Icon: MessageSquare },
   { to: "/portal-medico", label: "Portal Médico", Icon: Stethoscope },
   { to: "/redes-sociais", label: "Redes Sociais", Icon: Share2 },
-  { to: "/conectadelivery", label: "ConectaDelivery", Icon: UtensilsCrossed },
   { to: "/configuracoes", label: "Configurações", Icon: Settings },
 ] as const;
 
