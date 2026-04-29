@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Bike, Clock3, Flame, ReceiptText, TrendingUp } from "lucide-react";
 import { DeliveryLayout } from "@/components/conectadelivery/DeliveryLayout";
 import { liveOrders, menuHighlights, orderFlow } from "@/lib/conectadelivery-data";
+import burgerHero from "@/assets/conectadelivery-burger-hero.jpg";
 
 export const Route = createFileRoute("/conectadelivery")({
   head: () => ({
@@ -19,8 +20,16 @@ function ConectaDeliveryHome() {
   return (
     <DeliveryLayout>
       <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-elevated)] md:p-8">
-          <div className="absolute right-0 top-0 h-52 w-52 bg-primary/10 blur-3xl" />
+        <div className="relative min-h-[390px] overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-elevated)] md:p-8">
+          <img
+            src={burgerHero}
+            alt="Hambúrguer artesanal premium em cozinha de hamburgueria urbana"
+            width={1536}
+            height={1024}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/78 to-background/20" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background/95 to-transparent" />
           <div className="relative max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-primary">
               <Flame className="h-3.5 w-3.5" /> Operação quente agora
@@ -29,7 +38,7 @@ function ConectaDeliveryHome() {
               Delivery de alto padrão com atendimento que vende mais.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Visão executiva da hamburgueria: conversas, pedidos, cozinha, entrega, ticket médio e itens premium em um só painel.
+              Visão executiva da hamburgueria: pedidos, cozinha, entrega, ticket médio e itens premium em um só painel.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/conectadelivery-pedidos" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:brightness-110">
@@ -62,7 +71,7 @@ function ConectaDeliveryHome() {
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-display text-xl font-bold">Kanban de atendimento</h2>
-            <span className="text-xs font-semibold text-muted-foreground">pré-pedido</span>
+            <span className="text-xs font-semibold text-muted-foreground">somente delivery</span>
           </div>
           <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
             {orderFlow.map(({ title, Icon, count, tone, items }) => (

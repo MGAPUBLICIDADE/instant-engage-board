@@ -36,23 +36,23 @@ export const deliveryNav: DeliveryNavItem[] = [
 
 export const orderFlow = [
   {
-    title: "Novo contato",
+    title: "Novo pedido",
     Icon: MessageSquare,
     count: 8,
     tone: "text-info",
     items: [
-      { name: "Mesa Burger Club", detail: "Dúvida sobre combo premium", time: "2 min" },
-      { name: "Ana Paula", detail: "Quer montar pedido para 4 pessoas", time: "5 min" },
+      { name: "Pedido #8432", detail: "2x Angus Royale + batata trufada", time: "2 min" },
+      { name: "Pedido #8431", detail: "Combo premium para 4 pessoas", time: "5 min" },
     ],
   },
   {
-    title: "Qualificação",
+    title: "Montando combo",
     Icon: Sparkles,
     count: 5,
     tone: "text-primary",
     items: [
-      { name: "Rafael N.", detail: "Escolhendo ponto da carne", time: "9 min" },
-      { name: "Condomínio Jardins", detail: "Pedido corporativo", time: "13 min" },
+      { name: "Pedido #8430", detail: "Ponto da carne + cheddar extra", time: "9 min" },
+      { name: "Pedido #8429", detail: "Evento corporativo com 18 burgers", time: "13 min" },
     ],
   },
   {
@@ -61,18 +61,18 @@ export const orderFlow = [
     count: 11,
     tone: "text-warning",
     items: [
-      { name: "Marina C.", detail: "Aguardando Pix", time: "agora" },
-      { name: "Lucas T.", detail: "Adicionar sobremesa", time: "7 min" },
+      { name: "Pedido #8428", detail: "Aguardando Pix para iniciar cozinha", time: "agora" },
+      { name: "Pedido #8427", detail: "Adicionar brownie artesanal", time: "7 min" },
     ],
   },
   {
-    title: "Fechado",
+    title: "Pagamento confirmado",
     Icon: CheckCircle2,
     count: 19,
     tone: "text-success",
     items: [
-      { name: "VIP #8421", detail: "Pagamento aprovado", time: "12 min" },
-      { name: "Bia L.", detail: "Retirada no balcão", time: "18 min" },
+      { name: "Pedido #8426", detail: "Pagamento aprovado · enviar para chapa", time: "12 min" },
+      { name: "Pedido #8425", detail: "Retirada premium no balcão", time: "18 min" },
     ],
   },
 ];
