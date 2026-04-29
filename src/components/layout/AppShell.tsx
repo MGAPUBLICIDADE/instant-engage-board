@@ -17,7 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEmpresa } from "@/hooks/useEmpresa";
 
 const nav = [
-  { to: "/", label: "Home", Icon: Home },
+  { to: "/", label: "Home Clínica", Icon: Home },
   { to: "/agenda", label: "Agenda", Icon: Calendar },
   { to: "/atendimento", label: "Atendimento", Icon: MessageSquare },
   { to: "/portal-medico", label: "Portal Médico", Icon: Stethoscope },
