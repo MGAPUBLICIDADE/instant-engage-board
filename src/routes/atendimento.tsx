@@ -218,7 +218,7 @@ function KanbanDia() {
           <div className="flex-1 min-w-[200px]">
             <h1 className="font-display text-2xl font-bold tracking-tight">Kanban da Clínica</h1>
             <p className="text-sm text-muted-foreground">
-              Consultas, pacientes e médicos do dia · sem pedidos de delivery
+              Consultas, pacientes e médicos do dia
             </p>
           </div>
 
@@ -415,7 +415,7 @@ function Coluna({
         ))}
         {agendamentos.length === 0 && (
           <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border/40 py-6 text-[11px] text-muted-foreground">
-            Vazio
+            Nenhuma consulta
           </div>
         )}
       </div>
