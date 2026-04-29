@@ -70,7 +70,7 @@ function ConectaDeliveryHome() {
       <section className="mt-6 grid gap-5 xl:grid-cols-[1fr_0.9fr]">
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold">Kanban de atendimento</h2>
+            <h2 className="font-display text-xl font-bold">Kanban do Delivery</h2>
             <span className="text-xs font-semibold text-muted-foreground">somente delivery</span>
           </div>
           <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
