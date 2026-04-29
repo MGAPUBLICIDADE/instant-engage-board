@@ -150,14 +150,25 @@ const DELIVERY_TERMS = [
   "pedido",
   "burger",
   "hamburg",
+  "hambúrg",
+  "lanche",
   "angus",
+  "royale",
   "smash",
   "wagyu",
   "truffle",
+  "fries",
   "batata",
+  "cheddar",
+  "brownie",
+  "sobremesa",
   "combo",
   "cozinha",
   "entrega",
+  "retirada",
+  "balcão",
+  "motoboy",
+  "ifood",
   "pix",
   "chapa",
 ];
@@ -191,6 +202,11 @@ function KanbanDia() {
   const [detalhes, setDetalhes] = useState<Agendamento | null>(null);
   const [encaixeOpen, setEncaixeOpen] = useState(false);
 
+  const agendamentosClinica = useMemo(
+    () => agendamentos.filter((a) => a.status !== "cancelado" && !isDeliveryLikeAgendamento(a, pacientes)),
+    [agendamentos, pacientes],
+  );
+
   const grouped = useMemo(() => {
     const g: Record<StatusAgendamento, Agendamento[]> = {
       agendado: [],
@@ -199,16 +215,14 @@ function KanbanDia() {
       cancelado: [],
       faltou: [],
     };
-    agendamentos.forEach((a) => {
-      if (a.status === "cancelado") return;
-      if (isDeliveryLikeAgendamento(a, pacientes)) return;
+    agendamentosClinica.forEach((a) => {
       g[a.status].push(a);
     });
     return g;
-  }, [agendamentos, pacientes]);
+  }, [agendamentosClinica]);
 
-  const totalDia = agendamentos.filter((a) => a.status !== "cancelado" && !isDeliveryLikeAgendamento(a, pacientes)).length;
-  const activeAg = agendamentos.find((a) => a.id === activeId) ?? null;
+  const totalDia = agendamentosClinica.length;
+  const activeAg = agendamentosClinica.find((a) => a.id === activeId) ?? null;
 
   function handleDragStart(e: DragStartEvent) {
     setActiveId(String(e.active.id));
