@@ -106,6 +106,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (isPublic) return <>{children}</>;
   if (!isAuthenticated) return null;
+  if (pathname.startsWith("/conectadelivery")) return <>{children}</>;
 
   return <AppShell>{children}</AppShell>;
 }
