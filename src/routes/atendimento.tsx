@@ -145,6 +145,29 @@ const COLUNAS: { id: StatusAgendamento; titulo: string; tone: string; dot: strin
   { id: "faltou", titulo: "Pacientes que faltaram", tone: "border-destructive/40", dot: "bg-destructive" },
 ];
 
+const DELIVERY_TERMS = [
+  "delivery",
+  "pedido",
+  "burger",
+  "hamburg",
+  "angus",
+  "smash",
+  "wagyu",
+  "truffle",
+  "batata",
+  "combo",
+  "cozinha",
+  "entrega",
+  "pix",
+  "chapa",
+];
+
+function isDeliveryLikeAgendamento(ag: Agendamento, pacientes: Paciente[]) {
+  const paciente = getPaciente(pacientes, ag.paciente_id);
+  const texto = [paciente?.nome, ag.procedimento, ag.observacoes].filter(Boolean).join(" ").toLowerCase();
+  return DELIVERY_TERMS.some((term) => texto.includes(term));
+}
+
 function KanbanDia() {
   const navigate = useNavigate();
   const sp = Route.useSearch();
@@ -178,12 +201,13 @@ function KanbanDia() {
     };
     agendamentos.forEach((a) => {
       if (a.status === "cancelado") return;
+      if (isDeliveryLikeAgendamento(a, pacientes)) return;
       g[a.status].push(a);
     });
     return g;
-  }, [agendamentos]);
+  }, [agendamentos, pacientes]);
 
-  const totalDia = agendamentos.filter((a) => a.status !== "cancelado").length;
+  const totalDia = agendamentos.filter((a) => a.status !== "cancelado" && !isDeliveryLikeAgendamento(a, pacientes)).length;
   const activeAg = agendamentos.find((a) => a.id === activeId) ?? null;
 
   function handleDragStart(e: DragStartEvent) {
