@@ -20,6 +20,7 @@ import { Route as ConfiguracoesBaseConhecimentoRouteImport } from './routes/conf
 import { Route as ConfiguracoesAgendaRouteImport } from './routes/configuracoes-agenda'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ConectadeliveryPedidosRouteImport } from './routes/conectadelivery-pedidos'
+import { Route as ConectadeliveryCardapioRouteImport } from './routes/conectadelivery-cardapio'
 import { Route as ConectadeliveryRouteImport } from './routes/conectadelivery'
 import { Route as AtendimentoRouteImport } from './routes/atendimento'
 import { Route as AgendaRouteImport } from './routes/agenda'
@@ -82,6 +83,11 @@ const ConectadeliveryPedidosRoute = ConectadeliveryPedidosRouteImport.update({
   path: '/conectadelivery-pedidos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConectadeliveryCardapioRoute = ConectadeliveryCardapioRouteImport.update({
+  id: '/conectadelivery-cardapio',
+  path: '/conectadelivery-cardapio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConectadeliveryRoute = ConectadeliveryRouteImport.update({
   id: '/conectadelivery',
   path: '/conectadelivery',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
   '/conectadelivery': typeof ConectadeliveryRoute
+  '/conectadelivery-cardapio': typeof ConectadeliveryCardapioRoute
   '/conectadelivery-pedidos': typeof ConectadeliveryPedidosRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
   '/conectadelivery': typeof ConectadeliveryRoute
+  '/conectadelivery-cardapio': typeof ConectadeliveryCardapioRoute
   '/conectadelivery-pedidos': typeof ConectadeliveryPedidosRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/agenda': typeof AgendaRoute
   '/atendimento': typeof AtendimentoRoute
   '/conectadelivery': typeof ConectadeliveryRoute
+  '/conectadelivery-cardapio': typeof ConectadeliveryCardapioRoute
   '/conectadelivery-pedidos': typeof ConectadeliveryPedidosRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/configuracoes-agenda': typeof ConfiguracoesAgendaRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/conectadelivery'
+    | '/conectadelivery-cardapio'
     | '/conectadelivery-pedidos'
     | '/configuracoes'
     | '/configuracoes-agenda'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/conectadelivery'
+    | '/conectadelivery-cardapio'
     | '/conectadelivery-pedidos'
     | '/configuracoes'
     | '/configuracoes-agenda'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/atendimento'
     | '/conectadelivery'
+    | '/conectadelivery-cardapio'
     | '/conectadelivery-pedidos'
     | '/configuracoes'
     | '/configuracoes-agenda'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   AgendaRoute: typeof AgendaRoute
   AtendimentoRoute: typeof AtendimentoRoute
   ConectadeliveryRoute: typeof ConectadeliveryRoute
+  ConectadeliveryCardapioRoute: typeof ConectadeliveryCardapioRoute
   ConectadeliveryPedidosRoute: typeof ConectadeliveryPedidosRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ConfiguracoesAgendaRoute: typeof ConfiguracoesAgendaRoute
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConectadeliveryPedidosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conectadelivery-cardapio': {
+      id: '/conectadelivery-cardapio'
+      path: '/conectadelivery-cardapio'
+      fullPath: '/conectadelivery-cardapio'
+      preLoaderRoute: typeof ConectadeliveryCardapioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conectadelivery': {
       id: '/conectadelivery'
       path: '/conectadelivery'
@@ -342,6 +362,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgendaRoute: AgendaRoute,
   AtendimentoRoute: AtendimentoRoute,
   ConectadeliveryRoute: ConectadeliveryRoute,
+  ConectadeliveryCardapioRoute: ConectadeliveryCardapioRoute,
   ConectadeliveryPedidosRoute: ConectadeliveryPedidosRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ConfiguracoesAgendaRoute: ConfiguracoesAgendaRoute,
