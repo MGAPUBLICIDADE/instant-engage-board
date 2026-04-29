@@ -145,6 +145,40 @@ const COLUNAS: { id: StatusAgendamento; titulo: string; tone: string; dot: strin
   { id: "faltou", titulo: "Pacientes que faltaram", tone: "border-destructive/40", dot: "bg-destructive" },
 ];
 
+const DELIVERY_TERMS = [
+  "delivery",
+  "pedido",
+  "burger",
+  "hamburg",
+  "hambúrg",
+  "lanche",
+  "angus",
+  "royale",
+  "smash",
+  "wagyu",
+  "truffle",
+  "fries",
+  "batata",
+  "cheddar",
+  "brownie",
+  "sobremesa",
+  "combo",
+  "cozinha",
+  "entrega",
+  "retirada",
+  "balcão",
+  "motoboy",
+  "ifood",
+  "pix",
+  "chapa",
+];
+
+function isDeliveryLikeAgendamento(ag: Agendamento, pacientes: Paciente[]) {
+  const paciente = getPaciente(pacientes, ag.paciente_id);
+  const texto = [paciente?.nome, ag.procedimento, ag.observacoes].filter(Boolean).join(" ").toLowerCase();
+  return DELIVERY_TERMS.some((term) => texto.includes(term));
+}
+
 function KanbanDia() {
   const navigate = useNavigate();
   const sp = Route.useSearch();
@@ -168,6 +202,11 @@ function KanbanDia() {
   const [detalhes, setDetalhes] = useState<Agendamento | null>(null);
   const [encaixeOpen, setEncaixeOpen] = useState(false);
 
+  const agendamentosClinica = useMemo(
+    () => agendamentos.filter((a) => a.status !== "cancelado" && !isDeliveryLikeAgendamento(a, pacientes)),
+    [agendamentos, pacientes],
+  );
+
   const grouped = useMemo(() => {
     const g: Record<StatusAgendamento, Agendamento[]> = {
       agendado: [],
@@ -176,15 +215,14 @@ function KanbanDia() {
       cancelado: [],
       faltou: [],
     };
-    agendamentos.forEach((a) => {
-      if (a.status === "cancelado") return;
+    agendamentosClinica.forEach((a) => {
       g[a.status].push(a);
     });
     return g;
-  }, [agendamentos]);
+  }, [agendamentosClinica]);
 
-  const totalDia = agendamentos.filter((a) => a.status !== "cancelado").length;
-  const activeAg = agendamentos.find((a) => a.id === activeId) ?? null;
+  const totalDia = agendamentosClinica.length;
+  const activeAg = agendamentosClinica.find((a) => a.id === activeId) ?? null;
 
   function handleDragStart(e: DragStartEvent) {
     setActiveId(String(e.active.id));
@@ -193,7 +231,7 @@ function KanbanDia() {
     setActiveId(null);
     const overId = e.over?.id as StatusAgendamento | undefined;
     if (!overId) return;
-    const ag = agendamentos.find((a) => a.id === e.active.id);
+    const ag = agendamentosClinica.find((a) => a.id === e.active.id);
     if (!ag || ag.status === overId) return;
     atualizarStatus.mutate(
       { id: ag.id, status: overId, medico_id: ag.medico_id, data: ag.data },
